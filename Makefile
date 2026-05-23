@@ -1,7 +1,7 @@
 codigo = ./src/main.c
 binario = ./build/biblioteca
 
-all: compilar
+all: compilar executar
 
 compilar:
 	gcc $(codigo) -o $(binario)
