@@ -3,14 +3,11 @@
 #include <string.h>
 #include <ctype.h>
 
-#usuario
-
-
 /*
  * - livros emprestados
  */
 
-void tratar_strings(char *string){
+void tratar_strings(char *string){ //melhorar
 
     string[strcspn(string, "\n")] = '\0';
     int tam = strlen(string);
@@ -43,6 +40,97 @@ struct Usuario *usuario = calloc(100, sizeof(struct Usuario));
 int total_usuarios = 0;
 int limite = 100;
 
+const char *pasta_usuarios = "C:\\Usuarios";
+const FILE *lista_usuarios;
+
+void buscar_arq(){
+
+    if(_mkdir(pasta_usuarios) == 0){
+            printf("Pasta criada com sucesso.\n");
+    }
+
+    lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.txt", "r");
+
+    if(lista_usuarios == NULL){
+
+        printf("Criando o arquivo...\n");
+        lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.txt", "r");
+
+        if(lista_usuarios == NULL){
+            printf("Falha na criacao do arquivo.\n");
+            exit(1);
+        }
+
+        printf("Arquivo criado com sucesso.\n");
+
+    }else{
+        printf("Arquivo ja existente.\n");
+
+    }
+
+
+    //buscar no arquivo os dados do usuario
+
+    int escolha, encontrado = 0;
+
+    printf("Buscar matricula (1) ou nome (2)?\n");
+    scanf("%d", &escolha);
+    getchar();
+
+    switch(escolha){
+
+        case 1:{
+
+            int matricula;
+            char linha[100];
+            printf("Inserir matricula do usuario:\n");
+            fgets(&matricula, sizeof(linha), lista_usuarios);
+
+           while(f()){
+
+           }
+
+};
+
+void atualizar_arq(){
+
+    if(_mkdir(pasta_usuarios) == 0){
+            printf("Pasta criada com sucesso.\n");
+    }
+
+    //lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.txt", "r");
+    freopen("C:\\Usuarios\\Lista_Usuarios.txt", "r", stdin);
+
+    if(lista_usuarios == NULL){
+
+        printf("Criando o arquivo...\n");
+        lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.txt", "w");
+
+        if(lista_usuarios == NULL){
+            printf("Falha na criacao do arquivo.\n");
+            exit(1);
+        }
+
+        printf("Arquivo criado com sucesso.\n");
+
+    }else{
+        printf("Arquivo ja existente.\n");
+        fclose(lista_usuarios);
+        //lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.txt", "w");
+    }
+
+     freopen("C:\\Usuarios\\Lista_Usuarios.txt", "w", stdout);
+
+    fprintf(lista_usuarios, "----------------Lista Usuarios----------------\n\n");
+    for(int i = 0; i < total_usuarios; i++){
+        printf(lista_usuarios, "Matricula: %d\nNome: %s\nCurso: %s\n\n", usuario[i].matricula, usuario[i].nome, usuario[i].curso);
+    }
+
+    fclose(lista_usuarios);
+
+};
+
+
 //1
 void cadastrar_usuarios(){
 
@@ -53,7 +141,7 @@ void cadastrar_usuarios(){
 
         if(temp == NULL){
             printf("Falha na operacao.\n");
-            return;
+            exit(1);
         }
 
         usuario = temp;
@@ -88,76 +176,80 @@ void cadastrar_usuarios(){
     printf("Matricula do usuario: %d\n", novo_usuario.matricula);
      usuario[total_usuarios++] = novo_usuario;//adiciona o novo usuario a lista de usuarios ja cadastrados
     printf("Usuario cadastrado com sucesso!\n");
+    free(usuario);
+    atualizar_arq();
 
 };
 
 //2
+
 void buscar_usuarios(){
 
-    int escolha, encontrado = 0;
+     int escolha, encontrado = 0;
 
-    printf("Buscar matricula (1) ou nome (2)?\n");
-    scanf("%d", &escolha);
-    getchar();
+     printf("Buscar matricula (1) ou nome (2)?\n");
+     scanf("%d", &escolha);
+     getchar();
 
-    switch(escolha){
+     switch(escolha){
 
-        case 1:{
+         case 1:{
 
-            int matricula;
-            printf("Inserir matricula do usuario:\n");
-            scanf("%d", &matricula);
-            getchar();
+             int matricula;
+             printf("Inserir matricula do usuario:\n");
+             scanf("%d", &matricula);
+             getchar();
 
-            for(int i = 0; i < total_usuarios; i++){
-                if(usuario[i].matricula == matricula){
-                    encontrado = 1;
-                    printf("Matricula: %d\n", usuario[i].matricula);
-                    printf("Nome: %s\n", usuario[i].nome);
-                    printf("Curso: %s\n", usuario[i].curso);
-                    break;
-                }
-            }
+             for(int i = 0; i < total_usuarios; i++){
+                 if(usuario[i].matricula == matricula){
+                     encontrado = 1;
+                     printf("Matricula: %d\n", usuario[i].matricula);
+                     printf("Nome: %s\n", usuario[i].nome);
+                     printf("Curso: %s\n", usuario[i].curso);
+                     break;
+                 }
+             }
 
-            if(!encontrado){
-                printf("Usuario nao encontrado.\n");
-            }
-            break;
-        }
+             if(!encontrado){
+                 printf("Usuario nao encontrado.\n");
+             }
+             break;
+         }
 
-        case 2:{
+         case 2:{
 
-            char nome[100];
-            printf("Inserir nome do usuario:\n");
-            fgets(nome, sizeof(nome), stdin);
-            tratar_strings(nome);
+             char nome[100];
+             printf("Inserir nome do usuario:\n");
+             fgets(nome, sizeof(nome), stdin);
+             tratar_strings(nome);
 
-            for(int i = 0; i < total_usuarios; i++){
-                if(strcmp(nome, usuario[i].nome) == 0){
-                    encontrado = 1;
-                    printf("Matricula: %d\n", usuario[i].matricula);
-                    printf("Nome: %s\n", usuario[i].nome);
-                    printf("Curso: %s\n", usuario[i].curso);
-                    break;
-                }
-            }
+             for(int i = 0; i < total_usuarios; i++){
+                 if(strcmp(nome, usuario[i].nome) == 0){
+                     encontrado = 1;
+                     printf("Matricula: %d\n", usuario[i].matricula);
+                     printf("Nome: %s\n", usuario[i].nome);
+                     printf("Curso: %s\n", usuario[i].curso);
+                     break;
+                 }
+             }
 
-            if(!encontrado){
-                printf("Usuario nao encontrado.\n");
-            }
-            break;
-        }
-        default: printf("Comando invalido. Tente novamente.\n"); break;
-    }
+             if(!encontrado){
+                 printf("Usuario nao encontrado.\n");
+             }
+             break;
+         }
+         default: printf("Comando invalido. Tente novamente.\n"); break;
+     }
 
-};
+ };
+
 
 //3
 void listar_usuarios(){
 
     if(total_usuarios == 0){
         printf("Nenhum usuario cadastrado.\n");
-        return;
+        exit(1);
     }
 
     for(int i = 0; i < total_usuarios-1; i++){
@@ -174,6 +266,8 @@ void listar_usuarios(){
     for(int i = 0; i < total_usuarios; i++){
         printf("Matricula: %d\nNome: %s\nCurso: %s\n\n", usuario[i].matricula, usuario[i].nome, usuario[i].curso);
     }
+
+    atualizar_arq();
 
 };
 
@@ -203,6 +297,7 @@ void atualizar_usuarios(){
                     printf("Novo curso:\n");
                     fgets(usuario[i].curso, sizeof(usuario[i].curso), stdin);
                     tratar_strings(usuario[i].curso);
+                    atualizar_arq();
                     break;
                 }
             }
@@ -228,6 +323,7 @@ void atualizar_usuarios(){
                     printf("Novo curso:\n");
                     fgets(usuario[i].curso, sizeof(usuario[i].curso), stdin);
                     tratar_strings(usuario[i].curso);
+                    atualizar_arq();
                     break;
                 }
             }
@@ -247,7 +343,7 @@ void remover_usuarios(){
 
     if(total_usuarios == 0){
         printf("Nao ha usuarios disponiveis.\n");
-        return;
+        exit(1);
     }
 
     int escolha, encontrado = 0;
@@ -280,12 +376,14 @@ void remover_usuarios(){
 
                     if(temp == NULL){
                         printf("Falha na operacao.\n");
-                        return;
+                        exit(1);
                     }
 
                     usuario = temp;
 
                     printf("Usuario removido com sucesso!\n");
+                    free(usuario);
+                    atualizar_arq();
                     break;
                 }
             }
@@ -295,7 +393,6 @@ void remover_usuarios(){
             }
             break;
         }
-
         case 2: {
 
         char nome[100];
@@ -322,6 +419,8 @@ void remover_usuarios(){
                 usuario = temp;
 
                 printf("Usuario removido com sucesso!\n");
+                free(usuario);
+                atualizar_arq();
                 break;
             }
         }
@@ -339,37 +438,6 @@ void remover_usuarios(){
 
 int main(){
 
-    /*
-     *  teste
-     *
-     * FILE *user = fopen("arquivo.txt", "r");
-
-     void alterando_arquivo(){
-
-         if(user == NULL){
-             printf("Arquivo vazio.\n");
-             return;
-         }
-
-         FILE *teste = fopen("arquivo.txt", "a+b");
-
-         if(teste == NULL){
-             printf("Operacao falhou. Tente novamente.\n");
-             return;
-         }
-
-         user = teste;
-
-     };
-
-     temp = fwrite( usuario,sizeof(struct Usuario),total_usuarios,user);
-
-
-     */
-
-
-
-
     printf("\nMenu Banco de Dados de Usuarios:\n");
     printf("1. Cadastrar usuario.\n");
     printf("2. Buscar usuario.\n");
@@ -381,15 +449,10 @@ int main(){
     scanf("%d", &opcao);
 
 switch(opcao){
-case 1: {
-    cadastrar_usuario();
-
-}
-
-break;
+case 1: cadastrar_usuario(); break;
 case 2: listar_usuario(); break;
 case 3: buscar_usuario(); break;
-case 4: listar_usuaario(); break;
+case 4: listar_usuario(); break;
 case 5: atualizar_usuario(); break;
 case 6: return; break;
 default: printf("Operacao invalida. Tente novamente.\n"); break;
