@@ -9,14 +9,20 @@ uint64_t qtd_emprestimos = 0;
 
 int main(void) {
   emprestimos = malloc(sizeof(emprestimo) * 100000);
+  if (emprestimos == NULL) {
+    printf("Falha ao alocar memória");
+    return 1;
+  }
 
   FILE *emprestimos_arquivo = fopen("emprestimos.dat", "rb");
   if (emprestimos_arquivo != NULL) {
-    fread(&qtd_emprestimos, sizeof(int), 1, emprestimos_arquivo);
+    fread(&qtd_emprestimos, sizeof(uint64_t), 1, emprestimos_arquivo);
     fread(emprestimos, sizeof(emprestimo), qtd_emprestimos,
           emprestimos_arquivo);
     fclose(emprestimos_arquivo);
   }
+
+  printf("\e[1;1H\e[2J");
 
   for (;;) {
     char opcao;
@@ -31,6 +37,8 @@ int main(void) {
     if (error == EOF) {
       sair();
     }
+
+    limpar_buffer();
 
     switch (opcao) {
     case '1':
@@ -52,15 +60,12 @@ int main(void) {
       printf("Opção inválida.\n");
       break;
     }
-
-    getchar();
   }
+
+  free(emprestimos);
 
   return 0;
 }
-
-
-
 
 void acessar_livros() {
   printf("Acessando livros.\n");
@@ -72,8 +77,75 @@ void acessar_usuarios() {
   system("sleep 999");
 }
 
-void registrar_emprestimo(identificador_t matricula_usuario,
-                          identificador_t codigo_livro) {
+void ler_emprestimos() {
+  if (qtd_emprestimos == 0) {
+    printf("Sem empréstimos registrados\n");
+    return;
+  }
+
+  emprestimo emprestimo_lido;
+  struct tm *data_retirada;
+  struct tm *data_prevista;
+  struct tm *data_devolucao;
+
+  unsigned short dia_retirada;
+  unsigned short mes_retirada;
+  unsigned short dia_prevista;
+  unsigned short mes_prevista;
+  unsigned short dia_devolucao;
+  unsigned short mes_devolucao;
+
+  for (int i = 0; i < qtd_emprestimos; i++) {
+    emprestimo_lido = emprestimos[i];
+
+    data_retirada = localtime(&emprestimos[i].data_retirada);
+    dia_retirada = data_retirada->tm_mday;
+    mes_retirada = data_retirada->tm_mon + 1;
+
+    data_prevista = localtime(&emprestimos[i].data_prevista);
+    dia_prevista = data_prevista->tm_mday;
+    mes_prevista = data_prevista->tm_mon + 1;
+
+    data_devolucao = localtime(&emprestimos[i].data_devolucao);
+    dia_devolucao = data_devolucao->tm_mday;
+    mes_devolucao = data_devolucao->tm_mon + 1;
+
+    printf("id: %03lu | matrícula: %03lu | código do livro: %03lu | retirada: "
+           "%02d/%02d "
+           "| prazo: %02d/%02d | devolução: ",
+           emprestimos[i].id, emprestimos[i].matricula_usuario,
+           emprestimos[i].codigo_livro, dia_retirada, mes_retirada,
+           dia_prevista, mes_prevista);
+
+    if (emprestimo_lido.devolvido) {
+      printf("%02d/%02d", dia_devolucao, mes_devolucao);
+    } else {
+      printf("pendente");
+    }
+
+    printf("\n");
+  }
+}
+
+void salvar_emprestimos() {
+  FILE *emprestimos_arquivo = fopen("emprestimos.dat", "wb");
+  if (emprestimos_arquivo != NULL) {
+    fwrite(&qtd_emprestimos, sizeof(uint64_t), 1, emprestimos_arquivo);
+    fwrite(emprestimos, sizeof(emprestimo), qtd_emprestimos,
+           emprestimos_arquivo);
+    fclose(emprestimos_arquivo);
+  }
+}
+
+void registrar_emprestimo() {
+  identificador_t matricula_usuario, codigo_livro;
+  printf("Digite sua matrícula: ");
+  scanf("%lu", &matricula_usuario);
+  printf("Digite o código do livro: ");
+  scanf("%lu", &codigo_livro);
+
+  limpar_buffer();
+
   time_t agora = time(NULL);
   time_t prazo = agora + (14 * 24 * 3600);
   emprestimo novo_emprestimo = {
@@ -90,29 +162,67 @@ void registrar_emprestimo(identificador_t matricula_usuario,
   qtd_emprestimos++;
 
   salvar_emprestimos();
+  printf("Empréstimo registrado\n");
 };
 
-void acessar_emprestimos_e_devolucoes() {
+void registrar_devolucao() {
   identificador_t matricula_usuario, codigo_livro;
   printf("Digite sua matrícula: ");
   scanf("%lu", &matricula_usuario);
   printf("Digite o código do livro: ");
   scanf("%lu", &codigo_livro);
 
-  registrar_emprestimo(matricula_usuario, codigo_livro);
+  limpar_buffer();
 
-  emprestimo ultimo_emprestimo = emprestimos[qtd_emprestimos - 1];
-  printf("matrícula do usuário: %lu, código do livro: %lu\n",
-         ultimo_emprestimo.matricula_usuario, ultimo_emprestimo.codigo_livro);
-}
+  bool emprestimo_correspondente;
+  for (int i = 0; i < qtd_emprestimos; i++) {
+    emprestimo_correspondente =
+        emprestimos[i].matricula_usuario == matricula_usuario &&
+        emprestimos[i].codigo_livro == codigo_livro &&
+        !emprestimos[i].devolvido;
 
-void salvar_emprestimos() {
-  FILE *emprestimos_arquivo = fopen("emprestimos.dat", "wb");
-  if (emprestimos_arquivo != NULL) {
-    fwrite(&qtd_emprestimos, sizeof(uint64_t), 1, emprestimos_arquivo);
-    fwrite(emprestimos, sizeof(emprestimo), qtd_emprestimos,
-           emprestimos_arquivo);
-    fclose(emprestimos_arquivo);
+    if (emprestimo_correspondente) {
+      time_t agora = time(NULL);
+      emprestimos[i].data_devolucao = agora;
+      emprestimos[i].devolvido = true;
+
+      salvar_emprestimos();
+      printf("Devolução registrada\n");
+      return;
+    }
+  }
+
+  printf("Nenhum empréstimo correspondente encontrado\n");
+};
+
+void acessar_emprestimos_e_devolucoes() {
+  printf("\e[1;1H\e[2J");
+
+  char opcao;
+  printf("Empréstimos             \t[1]\n");
+  printf("Devoluções              \t[2]\n");
+  printf("Registros               \t[3]\n");
+
+  int error = scanf("%c", &opcao);
+  if (error == EOF) {
+    sair();
+  }
+
+  limpar_buffer();
+
+  switch (opcao) {
+  case '1':
+    registrar_emprestimo();
+    break;
+  case '2':
+    registrar_devolucao();
+    break;
+  case '3':
+    ler_emprestimos();
+    break;
+  default:
+    printf("Opção inválida.\n");
+    break;
   }
 }
 

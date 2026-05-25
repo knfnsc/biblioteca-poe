@@ -1,5 +1,5 @@
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <time.h>
 
 typedef uint64_t identificador_t;
@@ -54,10 +54,10 @@ typedef struct {
   bool devolvido;
 } emprestimo;
 
+void limpar_buffer();
 
 void acessar_livros();
 void acessar_usuarios();
 void acessar_emprestimos_e_devolucoes();
-void salvar_emprestimos();
 void acessar_relatorios();
 void sair();
