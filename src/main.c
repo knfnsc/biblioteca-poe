@@ -111,8 +111,7 @@ void ler_emprestimos() {
     mes_devolucao = data_devolucao->tm_mon + 1;
 
     printf("id: %03lu | matrícula: %03lu | código do livro: %03lu | retirada: "
-           "%02d/%02d "
-           "| prazo: %02d/%02d | devolução: ",
+           "%02d/%02d | prazo: %02d/%02d | devolução: ",
            emprestimos[i].id, emprestimos[i].matricula_usuario,
            emprestimos[i].codigo_livro, dia_retirada, mes_retirada,
            dia_prevista, mes_prevista);
