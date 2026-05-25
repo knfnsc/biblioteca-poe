@@ -8,7 +8,7 @@ emprestimo *emprestimos;
 uint64_t qtd_emprestimos = 0;
 
 int main(void) {
-  emprestimos = malloc(sizeof(emprestimo) * 100000);
+  emprestimos = malloc(sizeof(emprestimo) * 1000);
   if (emprestimos == NULL) {
     printf("Falha ao alocar memória");
     return 1;
@@ -88,12 +88,12 @@ void ler_emprestimos() {
   struct tm *data_prevista;
   struct tm *data_devolucao;
 
-  unsigned short dia_retirada;
-  unsigned short mes_retirada;
-  unsigned short dia_prevista;
-  unsigned short mes_prevista;
-  unsigned short dia_devolucao;
-  unsigned short mes_devolucao;
+  uint8_t dia_retirada;
+  uint8_t mes_retirada;
+  uint8_t dia_prevista;
+  uint8_t mes_prevista;
+  uint8_t dia_devolucao;
+  uint8_t mes_devolucao;
 
   for (int i = 0; i < qtd_emprestimos; i++) {
     emprestimo_lido = emprestimos[i];
