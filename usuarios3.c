@@ -3,26 +3,55 @@
 #include <string.h>
 #include <ctype.h>
 
-void tratar_strings(char *string){
 
-//entrada dat
+//bin
 
-    string[strcspn(string, "\n")] = '\0';
-    int tam = strlen(string);
+void tratar_string(char *str){
+
+    str[strcspn(str, "\n")] = '\0';
+
+    int tam = strlen(str);
     int p_nova = 1;
 
     for(int i = 0; i < tam; i++){
 
-        if(string[i] == ' '){
+        if(str[i] == ' '){
             p_nova = 1;
         }else if(p_nova){
             p_nova = 0;
-            string[i] = toupper(string[i]);
+            str[i] = toupper(str[i]);
         }else{
             p_nova = 0;
-            string[i] = tolower(string[i]);
+            str[i] = tolower(str[i]);
         }
     }
+
+    const char *prep[] = {"De", "Da", "Do", "Dos", "Das", "E"};
+    int qtd = sizeof(prep)/sizeof(prep[0]);
+
+    char copia[200] = "";
+
+    char *palavra = strtok(str, " ");
+
+    while(palavra){
+
+        for(int i = 0; i < qtd; i++){
+
+             if(strcmp(palavra, prep[i]) == 0){
+                 palavra[0] = tolower(palavra[0]);
+
+             }
+        }
+
+        strcat(copia, palavra);
+        strcat(copia, " ");
+
+        palavra = strtok(NULL, " ");
+    }
+
+    copia[strlen(copia)-1] = '\0';
+
+    strcpy(str, copia);
 
 };
 
@@ -40,7 +69,7 @@ int total_usuarios = 0;
 int limite = 100;
 
 const char *pasta_usuarios = "C:\\Usuarios";
-FILE *lista_usuarios;
+FILE *lista_usuariosb, *lista_usuariost;
 
 /*
 FILE *emprestimos_usuarios;
@@ -55,58 +84,84 @@ int carregar_usuarios(){
             printf("Pasta criada com sucesso.\n");
     }
 
-    lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.dat", "rb");
+    lista_usuariosb = fopen("C:\\Usuarios\\Lista_Usuarios.dat", "rb");
 
-    if(lista_usuarios == 0){
+    if(lista_usuariosb == 0){
 
         printf("Criando o arquivo...\n");
-        lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.dat", "wb");
+        FILE *temp  = fopen("C:\\Usuarios\\Lista_Usuarios.dat", "wb");
 
-        if(lista_usuarios == 0){
+        if(temp == 0){
             printf("Falha na criacao do arquivo.\n");
             exit(1);
-        }else{
-            printf("Arquivo criado com sucesso.\n");
         }
 
+        fclose(f);
+        lista_usuariosb = fopen("C:\\Usuarios\\Lista_Usuarios.dat", "rb");
+    }
+
     int i = 0;
-    while(fread(&usuario[i], sizeof(Usuario), 1, lista_usuarios) == 1){
+    while(fread(&usuario[i], sizeof(Usuario), 1, lista_usuariosb) == 1){
         i++;
     }
 
-    fclose(lista_usuarios);
+    fclose(lista_usuariosb);
 
     return i;
 
 };
 
-    void alterar_arquivo(int total_usuarios){
+void relatoriotxt(){
 
-        temp = fopen("C:\\temporario.txt", "wb");
+    temp = fopen("temporario.txt", "w");
 
-        if(temp == 0){
-            printf("Falha na alteracao do arquivo.\n");
-            exit(1);
-        }
+    if(temp == NULL){
+        printf("Falha na criacao do arquivo.\n");
+        exit(1);
+    }
 
-        for(int i = 0; i < total_usuarios-1; i++){
-            for(int j = 0; j < total_usuarios-i-1; j++){
-                if(strcmp(usuario[j].nome, usuario[j+1].nome) > 0){
-                    Usuario temp = usuario[j];
-                    usuario[j] = usuario[j+1];
-                    usuario[j+1] = usuario[j];
-                }
+    fprintf("-------------------LISTA USUARIOS-------------------\n\n");
+    for(int i = 0; i < total_usuarios; i++){
+        fprintf(temp, "Matricula: %s\n", usuario[i].matricula);
+        fprintf(temp, "Nome: %s\n", usuario[i].nome);
+        fprintf(temp, "Curso: %s\n\n", usuario[i].curso);
+    }
+
+    fclose(temp);
+
+    remove("C:\\Usuarios\\Lista_Usuarios.txt");
+    rename("temporario.txt", "C:\\Usuarios\\Lista_Usuarios.txt");
+
+};
+
+void alterar_arquivo(int total_usuarios){
+
+    temp = fopen("temporario.dat", "wb");
+
+    if(temp == 0){
+        printf("Falha na alteracao do arquivo.\n");
+        exit(1);
+    }
+
+    for(int i = 0; i < total_usuarios-1; i++){
+        for(int j = 0; j < total_usuarios-i-1; j++){
+            if(strcmp(usuario[j].nome, usuario[j+1].nome) > 0){
+                Usuario temp = usuario[j];
+                usuario[j] = usuario[j+1];
+                usuario[j+1] = temp;
             }
         }
+    }
 
         fwrite(usuario, sizeof(Usuario), total_usuarios, temp);
         fclose(temp);
 
         remove("C:\\Usuarios\\Lista_Usuarios.dat");
-        rename("C:\\temporario.txt", "C:\\Usuarios\\Lista_Usuarios.dat");
+        rename("temporario.dat", "C:\\Usuarios\\Lista_Usuarios.dat");
+
+        relatoriotxt();
 
     };
-
 
 
 void cadastrar_usuarios(int total_usuarios){
@@ -219,7 +274,7 @@ void buscar_usuarios(int total_usuarios){
 
 void listar_usuarios(int total_usuarios){
 
-    lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.dat", "r");
+    lista_usuarios = fopen("C:\\Usuarios\\Lista_Usuarios.txt", "r");
 
     Usuario *temp;
 
@@ -228,6 +283,8 @@ void listar_usuarios(int total_usuarios){
     for(int i = 0; i < total_usuarios; i++){
         printf("Matricula: %d\nNome: %s\nCurso: %s\n\n", temp[i].matricula, temp[i].nome, temp[i].curso);
     }
+
+    alterar_arquivo(total_usuarios);
 
 
 };
@@ -386,6 +443,7 @@ void remover_usuarios(int total_usuarios){
         default: printf("Comando invalido. Tente novamente.\n"); break;
     }
 };
+
 
 
 int main(){

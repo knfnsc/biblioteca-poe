@@ -5,24 +5,54 @@
 
 void tratar_strings(char *string){
 
-//entrada txt
+//txt
 
-    string[strcspn(string, "\n")] = '\0';
-    int tam = strlen(string);
+void tratar_string(char *str){
+
+    str[strcspn(str, "\n")] = '\0';
+
+    int tam = strlen(str);
     int p_nova = 1;
 
     for(int i = 0; i < tam; i++){
 
-        if(string[i] == ' '){
+        if(str[i] == ' '){
             p_nova = 1;
         }else if(p_nova){
             p_nova = 0;
-            string[i] = toupper(string[i]);
+            str[i] = toupper(str[i]);
         }else{
             p_nova = 0;
-            string[i] = tolower(string[i]);
+            str[i] = tolower(str[i]);
         }
     }
+
+    const char *prep[] = {"De", "Da", "Do", "E", "Dos", "Das"};
+    int qtd = sizeof(prep)/sizeof(prep[0]);
+
+    char copia[200] = "";
+
+    char *palavra = strtok(str, " ");
+
+    while(palavra){
+
+        for(int i = 0; i < qtd; i++){
+
+             if(strcmp(palavra, prep[i]) == 0){
+                 palavra[0] = tolower(palavra[0]);
+
+             }
+        }
+
+        strcat(copia, palavra);
+        strcat(copia, " ");
+
+        palavra = strtok(NULL, " ");
+    }
+
+    copia[strlen(copia)-1] = '\0';
+
+    strcpy(str, copia);
 
 };
 
@@ -48,7 +78,6 @@ emprestimo_usuario();
 */
 
 FILE *temp;
-
 
 void carregar_usuarios(){
 
@@ -95,7 +124,7 @@ void alterar_arquivo(){
             if(strcmp(usuario[j].nome, usuario[j+1].nome) > 0){
                 Usuario temp = usuario[j];
                 usuario[j] = usuario[j+1];
-                usuario[j+1] = usuario[j];
+                usuario[j+1] = temp;
             }
         }
     }
