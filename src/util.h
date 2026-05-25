@@ -2,8 +2,6 @@
 #include <stdint.h>
 #include <time.h>
 
-typedef uint64_t identificador_t;
-
 typedef enum {
   ROMANCE,
   FICCAO_CIENTIFICA,
@@ -26,8 +24,8 @@ typedef enum {
   COMPUTACAO,
 } curso_t;
 
-typedef struct {
-  identificador_t codigo;
+struct livro {
+  uint64_t codigo;
   char *titulo;
   char *autor;
   time_t ano;
@@ -35,29 +33,30 @@ typedef struct {
   uint8_t qtd_total;
   uint8_t qtd_disponivel;
   uint8_t total_emprestimos;
-} livro;
+};
 
-typedef struct {
-  identificador_t matricula;
+struct aluno {
+  uint64_t matricula;
   char *nome;
   curso_t curso;
   uint8_t qtd_emprestimos_ativos;
-} usuario;
+};
 
-typedef struct {
-  identificador_t id;
-  identificador_t matricula_usuario;
-  identificador_t codigo_livro;
+struct emprestimo {
+  uint64_t id;
+  uint64_t matricula_usuario;
+  uint64_t codigo_livro;
   time_t data_retirada;
   time_t data_prevista;
   time_t data_devolucao;
   bool devolvido;
-} emprestimo;
+};
 
 void limpar_buffer();
+void limpar_tela();
 
 void acessar_livros();
 void acessar_usuarios();
 void acessar_emprestimos_e_devolucoes();
 void acessar_relatorios();
-void sair();
+void sair(int codigo_de_erro);

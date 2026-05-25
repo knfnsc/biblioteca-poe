@@ -5,3 +5,5 @@ void limpar_buffer() {
   while ((c = getchar()) != '\n' && c != EOF)
     ;
 }
+
+void limpar_tela() { printf("\e[1;1H\e[2J"); }
