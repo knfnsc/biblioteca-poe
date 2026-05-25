@@ -13,7 +13,7 @@ int main(void) {
   emprestimos = malloc(sizeof(struct emprestimo) * 1000);
   if (emprestimos == NULL) {
     printf("Falha ao alocar memória!");
-    exit(1);
+    sair(1);
   }
 
   FILE *emprestimos_arquivo = fopen(ENDERECO_EMPRESTIMOS, "rb");
@@ -22,6 +22,7 @@ int main(void) {
     fread(emprestimos, sizeof(struct emprestimo), qtd_emprestimos,
           emprestimos_arquivo);
     fclose(emprestimos_arquivo);
+    sair(1);
   }
 
   limpar_tela();
@@ -63,8 +64,6 @@ int main(void) {
       break;
     }
   }
-
-  return 0;
 }
 
 void ler_emprestimos() {
@@ -229,6 +228,7 @@ void acessar_emprestimos_e_devolucoes() {
 
 void sair(int codigo_de_erro) {
   printf("Encerrando programa...\n");
+  free(emprestimos);
   exit(codigo_de_erro);
 }
 
