@@ -216,7 +216,7 @@ Usuario * cadastrar_usuarios(int *total_usuarios, Usuario *usuario){
 
     }
 
-    printf("Cadastro bem sucedido!\n");
+    printf("Cadastro bem-sucedido!\n");
     alterar_arquivo(total_usuarios, usuario);
 
     return usuario;
@@ -401,14 +401,17 @@ Usuario * atualizar_usuarios(int *total_usuarios, Usuario *usuario){
 
 Usuario * remover_usuarios(int *total_usuarios, Usuario *usuario){
 
+    int total;
     if(*total_usuarios == 0){
         printf("Nenhum usuário cadastrado.\n");
         return NULL;
     }
 
+    total = *total_usuarios;
+
     int escolha, qtd;
 
-    printf("Quantidade de usuários a atualizar:\n");
+    printf("Quantidade de usuários a remover:\n");
     scanf("%d", &qtd);
 
     printf("Buscar matrícula (1) ou nome (2)?\n");
@@ -436,8 +439,10 @@ Usuario * remover_usuarios(int *total_usuarios, Usuario *usuario){
                             }
 
                         (*total_usuarios)--;
-
+                        i--;
+                         printf("Remoção de usuário bem-sucedida!\n");
                     }
+
                 }
 
                 if(!encontrado){
@@ -447,13 +452,13 @@ Usuario * remover_usuarios(int *total_usuarios, Usuario *usuario){
             }
 
             Usuario *temp = realloc(usuario, *total_usuarios*sizeof(Usuario));
-
             if(temp == NULL){
                 printf("Falha na operação.\n");
                 exit(1);}
 
             usuario = temp;
-            printf("Remoção de usuários bem-sucedida!\n");
+
+            alterar_arquivo(total_usuarios, usuario);
             break;
 
         }
@@ -477,8 +482,11 @@ Usuario * remover_usuarios(int *total_usuarios, Usuario *usuario){
                         }
 
                         (*total_usuarios)--;
-
+                        i--;
+                        printf("Remoção de usuário bem-sucedida!\n");
                     }
+
+
                 }
 
                 if(!encontrado){
@@ -488,14 +496,13 @@ Usuario * remover_usuarios(int *total_usuarios, Usuario *usuario){
 
             Usuario *temp = realloc(usuario, *total_usuarios*sizeof(Usuario));
 
-            if(temp ==  NULL){
+            if(temp ==  NULL && *total_usuarios > 0){
                 printf("Falha na operação.\n");
                 exit(1);}
 
             usuario = temp;
 
             alterar_arquivo(total_usuarios, usuario);
-            printf("Remoção de usuários bem-sucedida!\n");
             break;
 
         }
