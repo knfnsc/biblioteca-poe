@@ -43,11 +43,11 @@ extern FILE *livrosb;
 Livro *carregar_livros();
 Emprestimo *carregar_emprestimos();
 
-//objetivo: ler os dados dos usuários já cadastrados e retornar o valor inteiro correspondente ao total de usuários lidos; também cria a pasta de Usuários se ela ainda não existir
+//objetivo: ler os dados dos usuários já cadastrados e retornar a struct correspondente aos usuários lidos; também cria a pasta da Biblioteca se ela ainda não existir
 Usuario *carregar_usuarios(Usuario *usuario, int *capacidade, int *total_usuarios);
 
-//objetivo: permitir que os arquivos referentes aos dados dos usuários sejam alterados duarante a executação do programa
-//está conectado com a função relatorio_txt -> a diferença é que a função atual altera os dados dentro do arquivo binário, para então alterar os arquivos de texto
+//objetivo: permitir que os arquivos referentes aos dados dos usuários sejam alterados durante a execução do programa
+//está conectado com a função relatoriotxt_usuarios -> a diferença é que a função atual altera os dados dentro do arquivo binário, para então alterar os arquivos de texto
 //por que separar essas funções?
 //Os arquivos em binário são mais fáceis e mais rápidos de serem lidos durante o programa, mas possuem a desvantagem de não serem compreensíveis para o usuário do programa.
 //Para resolver isso, usamos o arquivo bin para as tarefas gerais do programa e, somente para gerar os relatórios de texto, usamos funções como fscanf e fprintf, otimizando a execução do programa

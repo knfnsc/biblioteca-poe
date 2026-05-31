@@ -32,7 +32,8 @@ void atualizar_usuarios(int *total_usuarios, Usuario *usuario);
 // Ao final, salvar as alterações nos arquivos, atulizar o ponteiro de struct usuario e o valor em *total_usuarios
 Usuario * remover_usuarios(int *total_usuarios, Usuario *usuario);
 
-//objetivo: verificar quantos e quais livros um usuário pegou,
+//objetivo: verificar quantos e quais livros um usuário pegou
+
 void emprestimos_usuarios(int *total_usuarios, int *total_emprestimos, int *total_livros, Usuario *usuario, Emprestimo *emprestimo, Livro *livro)
 
 /*

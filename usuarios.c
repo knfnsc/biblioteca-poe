@@ -417,8 +417,6 @@ Usuario * remover_usuarios(int *total_usuarios, Usuario *usuario){//recebe o end
 
     return usuario;
 
-};
-
 
 void emprestimos_usuarios(int *total_usuarios, int *total_emprestimos, int *total_livros, Usuario *usuario, Emprestimo *emprestimo, Livro *livro){
 
@@ -455,20 +453,25 @@ void emprestimos_usuarios(int *total_usuarios, int *total_emprestimos, int *tota
 
    }
 
-    printf("Total de empréstimos ativos do usuário: %d", usuario[j].qtd_emprestimos_ativos);
-    for(int i = 0; i < *total_emprestimos; i++){//buscar matrícula correspondente, percorrendo todos os empréstimos
+   if(usuario[j].qtd_emprestimos_ativos == 0){
+       printf("Usuário sem empréstimos no momento.\n");
+       return;
+   }
 
-        if(emprestimo[i].matricula_usuario == usuario[j].matricula){//compara a matrícula de cada usuário que já fez um empréstimo com a matrícula inserida pelo usuário
-                //quando encontra a posição do empréstimo correspondente a esse usuário, compara o código do livro emprestado
+   printf("Total de empréstimos ativos do usuário: %d", usuario[j].qtd_emprestimos_ativos);
 
-                for(int k = 0; k < *total_livros; k++){//percorre todos os livros cadastrados
-                    if(emprestimo[i].codigo_livro == livro[k].codigo && !(emprestimo[i].devolvido)){//fixado o código do livro, percorre até encontrar o livro com o código correspondente
-                        printf("Título: %s\nCódigo: %llu\n\n", livro[k].titulo, livro[k].codigo);  //verifica também se o livro já foi devolvido -> se não foi (0), ele informa o livro
-                        cont++; //conta quantos livros o usuário ainda não devolveu
-                        break; //sai do laço k e volta para o j, buscando um novo possível empréstimo ativo desse mesmo usuário
-                    }
-                }
-        }
-    }
+       for(int i = 0; i < *total_emprestimos; i++){//buscar matrícula correspondente, percorrendo todos os empréstimos
+
+           if(emprestimo[i].matricula_usuario == usuario[j].matricula){//compara a matrícula de cada usuário que já fez um empréstimo com a matrícula inserida pelo usuário
+                   //quando encontra a posição do empréstimo correspondente a esse usuário, compara o código do livro emprestado
+
+                   for(int k = 0; k < *total_livros; k++){//percorre todos os livros cadastrados
+                       if(emprestimo[i].codigo_livro == livro[k].codigo && !(emprestimo[i].devolvido)){//fixado o código do livro, percorre até encontrar o livro com o código correspondente
+                           printf("Título: %s\nCódigo: %llu\n\n", livro[k].titulo, livro[k].codigo);  //verifica também se o livro já foi devolvido -> se não foi (0), ele informa o livro
+                           break; //sai do laço k e volta para o i, buscando um novo possível empréstimo ativo desse mesmo usuário
+                       }
+                   }
+           }
+       }
 
 };
