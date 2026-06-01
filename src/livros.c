@@ -1,219 +1,192 @@
+#include "../include/livros.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "livros.h"
 
 Livro *livros = NULL;
 int total_livros = 0;
 
-void salvarLivros() {
-
-    FILE *arquivo = fopen("livros.dat", "wb");
-
-    if (arquivo == NULL)
-        return;
-
-    fwrite(&total_livros, sizeof(int), 1, arquivo);
-    fwrite(livros, sizeof(Livro), total_livros, arquivo);
-
-    fclose(arquivo);
+void salvar_livros() {
+  FILE *arquivo = fopen("livros.dat", "wb");
+  if (arquivo == NULL)
+    return;
+  fwrite(&total_livros, sizeof(int), 1, arquivo);
+  fwrite(livros, sizeof(Livro), total_livros, arquivo);
+  fclose(arquivo);
 }
 
-void carregarLivros() {
-
-    FILE *arquivo = fopen("livros.dat", "rb");
-
-    if (arquivo == NULL)
-        return;
-
-    fread(&total_livros, sizeof(int), 1, arquivo);
-
-    livros = malloc(total_livros * sizeof(Livro));
-
-    fread(livros, sizeof(Livro), total_livros, arquivo);
-
-    fclose(arquivo);
+void carregar_livros() {
+  FILE *arquivo = fopen("livros.dat", "rb");
+  if (arquivo == NULL)
+    return;
+  fread(&total_livros, sizeof(int), 1, arquivo);
+  livros = malloc(total_livros * sizeof(Livro));
+  fread(livros, sizeof(Livro), total_livros, arquivo);
+  fclose(arquivo);
 }
 
-void cadastrarLivro() {
+void cadastrar_livro() {
+  Livro novo;
+  int maiorCodigo = 0;
 
-    Livro novo;
+  for (int i = 0; i < total_livros; i++) {
+    if (livros[i].codigo > maiorCodigo)
+      maiorCodigo = livros[i].codigo;
+  }
 
-    int maiorCodigo = 0;
+  novo.codigo = maiorCodigo + 1;
 
-    for(int i = 0; i < total_livros; i++) {
-        if(livros[i].codigo > maiorCodigo)
-            maiorCodigo = livros[i].codigo;
-    }
+  printf("Titulo: ");
+  scanf(" %[^\n]", novo.titulo);
 
-    novo.codigo = maiorCodigo + 1;
+  printf("Autor: ");
+  scanf(" %[^\n]", novo.autor);
 
-    printf("Titulo: ");
-    scanf(" %[^\n]", novo.titulo);
+  printf("Ano: ");
+  scanf("%d", &novo.ano);
 
-    printf("Autor: ");
-    scanf(" %[^\n]", novo.autor);
+  printf("Genero: ");
+  scanf(" %[^\n]", novo.genero);
 
-    printf("Ano: ");
-    scanf("%d", &novo.ano);
+  printf("Quantidade de exemplares: ");
+  scanf("%d", &novo.qtd_total);
 
-    printf("Genero: ");
-    scanf(" %[^\n]", novo.genero);
+  novo.qtd_disponivel = novo.qtd_total;
 
-    printf("Quantidade de exemplares: ");
-    scanf("%d", &novo.qtd_total);
+  livros = realloc(livros, (total_livros + 1) * sizeof(Livro));
+  livros[total_livros] = novo;
 
-    novo.qtd_disponivel = novo.qtd_total;
+  total_livros++;
 
-    livros = realloc(livros, (total_livros + 1) * sizeof(Livro));
+  salvarLivros();
 
-    livros[total_livros] = novo;
-
-    total_livros++;
-
-    salvarLivros();
-
-    printf("\nLivro cadastrado com sucesso!\n");
+  printf("\nLivro cadastrado com sucesso!\n");
 }
 
-void listarLivros() {
+void listar_livros() {
+  if (total_livros == 0) {
+    printf("Nenhum livro cadastrado.\n");
+    return;
+  }
 
-    if(total_livros == 0) {
-        printf("Nenhum livro cadastrado.\n");
-        return;
-    }
+  for (int i = 0; i < total_livros; i++) {
+    printf("\nCodigo: %d\n", livros[i].codigo);
+    printf("Titulo: %s\n", livros[i].titulo);
+    printf("Autor: %s\n", livros[i].autor);
+    printf("Ano: %d\n", livros[i].ano);
+    printf("Genero: %s\n", livros[i].genero);
+    printf("Quantidade Total: %d\n", livros[i].qtd_total);
+    printf("Disponiveis: %d\n", livros[i].qtd_disponivel);
 
-    for(int i = 0; i < total_livros; i++) {
-
-        printf("\nCodigo: %d\n", livros[i].codigo);
-        printf("Titulo: %s\n", livros[i].titulo);
-        printf("Autor: %s\n", livros[i].autor);
-        printf("Ano: %d\n", livros[i].ano);
-        printf("Genero: %s\n", livros[i].genero);
-        printf("Quantidade Total: %d\n", livros[i].qtd_total);
-        printf("Disponiveis: %d\n", livros[i].qtd_disponivel);
-
-        printf("---------------------------\n");
-    }
+    printf("---------------------------\n");
+  }
 }
 
-void buscarLivroCodigo() {
+void buscar_livro_codigo() {
+  int codigo;
+  int encontrado = 0;
 
-    int codigo;
-    int encontrado = 0;
+  printf("Digite o codigo: ");
+  scanf("%d", &codigo);
 
-    printf("Digite o codigo: ");
-    scanf("%d", &codigo);
+  for (int i = 0; i < total_livros; i++) {
+    if (livros[i].codigo == codigo) {
+      printf("\nCodigo: %d\n", livros[i].codigo);
+      printf("Titulo: %s\n", livros[i].titulo);
+      printf("Autor: %s\n", livros[i].autor);
+      printf("Ano: %d\n", livros[i].ano);
+      printf("Genero: %s\n", livros[i].genero);
 
-    for(int i = 0; i < total_livros; i++) {
-
-        if(livros[i].codigo == codigo) {
-
-            printf("\nCodigo: %d\n", livros[i].codigo);
-            printf("Titulo: %s\n", livros[i].titulo);
-            printf("Autor: %s\n", livros[i].autor);
-            printf("Ano: %d\n", livros[i].ano);
-            printf("Genero: %s\n", livros[i].genero);
-
-            encontrado = 1;
-            break;
-        }
+      encontrado = 1;
+      break;
     }
+  }
 
-    if(!encontrado)
-        printf("Livro nao encontrado.\n");
+  if (!encontrado)
+    printf("Livro nao encontrado.\n");
 }
 
-void buscarLivroTitulo() {
+void buscar_livro_titulo() {
+  char busca[100];
+  int encontrado = 0;
 
-    char busca[100];
-    int encontrado = 0;
+  printf("Digite parte do titulo: ");
+  scanf(" %[^\n]", busca);
 
-    printf("Digite parte do titulo: ");
-    scanf(" %[^\n]", busca);
+  for (int i = 0; i < total_livros; i++) {
+    if (strstr(livros[i].titulo, busca) != NULL) {
+      printf("\nCodigo: %d\n", livros[i].codigo);
+      printf("Titulo: %s\n", livros[i].titulo);
+      printf("Autor: %s\n", livros[i].autor);
 
-    for(int i = 0; i < total_livros; i++) {
-
-        if(strstr(livros[i].titulo, busca) != NULL) {
-
-            printf("\nCodigo: %d\n", livros[i].codigo);
-            printf("Titulo: %s\n", livros[i].titulo);
-            printf("Autor: %s\n", livros[i].autor);
-
-            encontrado = 1;
-        }
+      encontrado = 1;
     }
+  }
 
-    if(!encontrado)
-        printf("Nenhum livro encontrado.\n");
+  if (!encontrado)
+    printf("Nenhum livro encontrado.\n");
 }
 
-void atualizarLivro() {
+void atualizar_livro() {
+  int codigo;
+  int encontrado = 0;
 
-    int codigo;
-    int encontrado = 0;
+  printf("Digite o codigo do livro: ");
+  scanf("%d", &codigo);
 
-    printf("Digite o codigo do livro: ");
-    scanf("%d", &codigo);
+  for (int i = 0; i < total_livros; i++) {
+    if (livros[i].codigo == codigo) {
 
-    for(int i = 0; i < total_livros; i++) {
+      printf("Novo titulo: ");
+      scanf(" %[^\n]", livros[i].titulo);
 
-        if(livros[i].codigo == codigo) {
+      printf("Novo autor: ");
+      scanf(" %[^\n]", livros[i].autor);
 
-            printf("Novo titulo: ");
-            scanf(" %[^\n]", livros[i].titulo);
+      printf("Novo ano: ");
+      scanf("%d", &livros[i].ano);
 
-            printf("Novo autor: ");
-            scanf(" %[^\n]", livros[i].autor);
+      printf("Novo genero: ");
+      scanf(" %[^\n]", livros[i].genero);
 
-            printf("Novo ano: ");
-            scanf("%d", &livros[i].ano);
+      salvarLivros();
 
-            printf("Novo genero: ");
-            scanf(" %[^\n]", livros[i].genero);
+      printf("Livro atualizado.\n");
 
-            salvarLivros();
-
-            printf("Livro atualizado.\n");
-
-            encontrado = 1;
-            break;
-        }
+      encontrado = 1;
+      break;
     }
+  }
 
-    if(!encontrado)
-        printf("Livro nao encontrado.\n");
+  if (!encontrado)
+    printf("Livro nao encontrado.\n");
 }
 
-void removerLivro() {
+void remover_livro() {
+  int codigo;
+  int encontrado = 0;
 
-    int codigo;
-    int encontrado = 0;
+  printf("Digite o codigo do livro: ");
+  scanf("%d", &codigo);
 
-    printf("Digite o codigo do livro: ");
-    scanf("%d", &codigo);
+  for (int i = 0; i < total_livros; i++) {
+    if (livros[i].codigo == codigo) {
+      for (int j = i; j < total_livros - 1; j++) {
+        livros[j] = livros[j + 1];
+      }
 
-    for(int i = 0; i < total_livros; i++) {
+      total_livros--;
 
-        if(livros[i].codigo == codigo) {
+      livros = realloc(livros, total_livros * sizeof(Livro));
+      salvarLivros();
 
-            for(int j = i; j < total_livros - 1; j++) {
-                livros[j] = livros[j + 1];
-            }
+      printf("Livro removido.\n");
 
-            total_livros--;
-
-            livros = realloc(livros, total_livros * sizeof(Livro));
-
-            salvarLivros();
-
-            printf("Livro removido.\n");
-
-            encontrado = 1;
-            break;
-        }
+      encontrado = 1;
+      break;
     }
+  }
 
-    if(!encontrado)
-        printf("Livro nao encontrado.\n");
+  if (!encontrado)
+    printf("Livro nao encontrado.\n");
 }

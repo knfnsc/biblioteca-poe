@@ -1,4 +1,4 @@
-#include "util.h"
+#include "../include/util.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,9 +6,10 @@
 
 #define ENDERECO_EMPRESTIMOS "emprestimos.dat"
 
-uint64_t qtd_emprestimos = 0;
+uint64_t qtd_emprestimos;
 struct emprestimo *emprestimos;
 
+/*
 int main(void) {
   emprestimos = malloc(sizeof(struct emprestimo) * 1000);
   if (emprestimos == NULL) {
@@ -65,13 +66,13 @@ int main(void) {
   }
 }
 
+*/
+
 void ler_emprestimos() {
   if (qtd_emprestimos == 0) {
     printf("Sem empréstimos registrados.\n");
     return;
   }
-
-  struct emprestimo emprestimo_atual;
 
   // ponteiro de struct para converter "time_t" (segundos) para um formato
   // legível.
@@ -101,7 +102,7 @@ void ler_emprestimos() {
            emprestimos[i].codigo_livro, dia_retirada, mes_retirada,
            dia_prevista, mes_prevista);
 
-    if (emprestimo_atual.devolvido) {
+    if (emprestimos[i].devolvido) {
       data_devolucao = localtime(&emprestimos[i].data_devolucao);
       dia_devolucao = data_devolucao->tm_mday;
       mes_devolucao = data_devolucao->tm_mon + 1;
@@ -125,16 +126,18 @@ void salvar_emprestimos() {
 
 void registrar_emprestimo() {
   uint64_t matricula_usuario, codigo_livro;
+ 
   printf("Digite a matrícula: ");
   scanf("%lu", &matricula_usuario);
+  limpar_buffer();
+  
   printf("Digite o código do livro: ");
   scanf("%lu", &codigo_livro);
-
   limpar_buffer();
 
-  const uint32_t dia = 24 * 3600;
+  const time_t segundos_no_dia = 24 * 3600;
   time_t agora = time(NULL);
-  time_t prazo = agora + (14 * dia);
+  time_t prazo = agora + (14 * segundos_no_dia);
   struct emprestimo novo_emprestimo = {
       .id = qtd_emprestimos + 1,
       .matricula_usuario = matricula_usuario,
@@ -146,7 +149,7 @@ void registrar_emprestimo() {
   };
 
   emprestimos[qtd_emprestimos] = novo_emprestimo;
-  qtd_emprestimos += 1;
+  qtd_emprestimos++;
 
   salvar_emprestimos();
   printf("Empréstimo registrado!\n");
@@ -159,16 +162,17 @@ void registrar_devolucao() {
   }
 
   uint64_t matricula_usuario, codigo_livro;
+  
   printf("Digite a matrícula: ");
   scanf("%lu", &matricula_usuario);
+  limpar_buffer();
+  
   printf("Digite o código do livro: ");
   scanf("%lu", &codigo_livro);
-
   limpar_buffer();
 
-  struct emprestimo emprestimo_atual;
   bool encontrado;
-  for (int i = 0; i < qtd_emprestimos; i++) {
+  for (uint64_t i = 0; i < qtd_emprestimos; i++) {
     encontrado = emprestimos[i].matricula_usuario == matricula_usuario &&
                  emprestimos[i].codigo_livro == codigo_livro &&
                  !emprestimos[i].devolvido;
@@ -187,6 +191,7 @@ void registrar_devolucao() {
   printf("Nenhum empréstimo correspondente encontrado.\n");
 };
 
+/*
 void acessar_emprestimos_e_devolucoes() {
   for (;;) {
     char opcao;
@@ -196,10 +201,10 @@ void acessar_emprestimos_e_devolucoes() {
     printf("Voltar      %15s\n", "[4]");
 
     int erro = scanf("%c", &opcao);
+    limpar_buffer();
     if (erro == EOF) {
       sair(0);
     }
-    limpar_buffer();
 
     limpar_tela();
 
@@ -222,15 +227,13 @@ void acessar_emprestimos_e_devolucoes() {
     }
 
     printf("-----------------------------------\n");
+
   }
 }
+*/
 
 void sair(int codigo_de_erro) {
   printf("Encerrando programa...\n");
   free(emprestimos);
   exit(codigo_de_erro);
 }
-
-void acessar_livros() {}
-void acessar_usuarios() {}
-void acessar_relatorios() {}
