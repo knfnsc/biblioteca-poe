@@ -1,20 +1,16 @@
-principal = ./main.c
-utilitarios = ./util.c
-livros = ./livros.c
-usuarios = ./usuarios.c
-emprestimos = ./emprestimos.c
-binario = ./biblioteca.out
+CC     = clang
+CFLAGS = -Wall -Wextra -Iinclude
+SRC    = $(wildcard src/*.c)
+TARGET = build/biblioteca-poe.out
 
-all: compilar executar
+# compila tudo
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) $^ -o $@
 
-compilar:
-	gcc \
-		$(principal) \
-		$(utilitarios) \
-		$(livros) \
-		$(usuarios) \
-		$(emprestimos) \
-		-o $(binario)
+run:
+	./$(TARGET)
 
-executar:
-	./$(binario)
+# limpa binário
+clean:
+	rm -f $(TARGET)
+	
