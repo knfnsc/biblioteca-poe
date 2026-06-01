@@ -16,13 +16,12 @@ int main(void) {
     sair(1);
   }
 
-  FILE *emprestimos_arquivo = fopen(ENDERECO_EMPRESTIMOS, "rb");
-  if (emprestimos_arquivo != NULL) {
-    fread(&qtd_emprestimos, sizeof(uint64_t), 1, emprestimos_arquivo);
+  FILE *arquivo_emprestimos = fopen(ENDERECO_EMPRESTIMOS, "rb");
+  if (arquivo_emprestimos != NULL) {
+    fread(&qtd_emprestimos, sizeof(uint64_t), 1, arquivo_emprestimos);
     fread(emprestimos, sizeof(struct emprestimo), qtd_emprestimos,
-          emprestimos_arquivo);
-    fclose(emprestimos_arquivo);
-    sair(1);
+          arquivo_emprestimos);
+    fclose(arquivo_emprestimos);
   }
 
   limpar_tela();
@@ -87,7 +86,7 @@ void ler_emprestimos() {
   uint8_t mes_prevista;
   uint8_t mes_devolucao;
 
-  for (int i = 0; i < qtd_emprestimos; i++) {
+  for (uint64_t i = 0; i < qtd_emprestimos; i++) {
     data_retirada = localtime(&emprestimos[i].data_retirada);
     dia_retirada = data_retirada->tm_mday;
     mes_retirada = data_retirada->tm_mon + 1;
