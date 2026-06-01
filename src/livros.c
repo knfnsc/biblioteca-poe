@@ -52,13 +52,10 @@ void cadastrar_livro() {
   scanf("%d", &novo.qtd_total);
 
   novo.qtd_disponivel = novo.qtd_total;
-
   livros = realloc(livros, (total_livros + 1) * sizeof(Livro));
   livros[total_livros] = novo;
-
   total_livros++;
-
-  salvarLivros();
+  salvar_livros();
 
   printf("\nLivro cadastrado com sucesso!\n");
 }
@@ -136,7 +133,6 @@ void atualizar_livro() {
 
   for (int i = 0; i < total_livros; i++) {
     if (livros[i].codigo == codigo) {
-
       printf("Novo titulo: ");
       scanf(" %[^\n]", livros[i].titulo);
 
@@ -149,7 +145,7 @@ void atualizar_livro() {
       printf("Novo genero: ");
       scanf(" %[^\n]", livros[i].genero);
 
-      salvarLivros();
+      salvar_livros();
 
       printf("Livro atualizado.\n");
 
@@ -178,7 +174,7 @@ void remover_livro() {
       total_livros--;
 
       livros = realloc(livros, total_livros * sizeof(Livro));
-      salvarLivros();
+      salvar_livros();
 
       printf("Livro removido.\n");
 

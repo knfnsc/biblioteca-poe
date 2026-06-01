@@ -1,4 +1,4 @@
-CC     = clang
+CC     = gcc
 CFLAGS = -Wall -Wextra -Iinclude
 SRC    = $(wildcard src/*.c)
 TARGET = build/biblioteca-poe.out
@@ -7,10 +7,11 @@ TARGET = build/biblioteca-poe.out
 $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) $^ -o $@
 
+# executa o binário
 run:
 	./$(TARGET)
 
-# limpa binário
+# apaga o binário
 clean:
 	rm -f $(TARGET)
 	
