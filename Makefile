@@ -14,4 +14,7 @@ run:
 # apaga o binário
 clean:
 	rm -f $(TARGET)
-	
+
+# formata o código
+format:
+	clang-format -i src/*.c include/*.h

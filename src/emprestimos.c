@@ -1,4 +1,4 @@
-#include "../include/util.h"
+#include "../include/utilitarios.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,16 +76,9 @@ void ler_emprestimos() {
 
   // ponteiro de struct para converter "time_t" (segundos) para um formato
   // legível.
-  struct tm *data_retirada;
-  struct tm *data_prevista;
-  struct tm *data_devolucao;
-
-  uint8_t dia_retirada;
-  uint8_t dia_prevista;
-  uint8_t dia_devolucao;
-  uint8_t mes_retirada;
-  uint8_t mes_prevista;
-  uint8_t mes_devolucao;
+  struct tm *data_retirada, *data_prevista, *data_devolucao;
+  uint8_t dia_retirada, dia_prevista, dia_devolucao, mes_retirada, mes_prevista,
+      mes_devolucao;
 
   for (uint64_t i = 0; i < qtd_emprestimos; i++) {
     data_retirada = localtime(&emprestimos[i].data_retirada);
@@ -126,11 +119,11 @@ void salvar_emprestimos() {
 
 void registrar_emprestimo() {
   uint64_t matricula_usuario, codigo_livro;
- 
+
   printf("Digite a matrícula: ");
   scanf("%lu", &matricula_usuario);
   limpar_buffer();
-  
+
   printf("Digite o código do livro: ");
   scanf("%lu", &codigo_livro);
   limpar_buffer();
@@ -162,11 +155,11 @@ void registrar_devolucao() {
   }
 
   uint64_t matricula_usuario, codigo_livro;
-  
+
   printf("Digite a matrícula: ");
   scanf("%lu", &matricula_usuario);
   limpar_buffer();
-  
+
   printf("Digite o código do livro: ");
   scanf("%lu", &codigo_livro);
   limpar_buffer();
