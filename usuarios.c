@@ -167,12 +167,17 @@ void remover_usuarios(){
     matricula = inteiro_valido();
 
     for(int i = 0; i < total_usuarios; i++){
-        if(usuarios[i].matricula == matricula){
 
+        if(usuarios[i].matricula == matricula){
             encontrado = 1;
 
-            for(int j = i; j < total_usuarios-1; j++){
-                usuarios[j] = usuarios[j+1];
+            if(usuarios[i].qtd_emprestimos_ativos != 0){
+                printf("Remoção não autorizada. O usuário possui empréstimos em aberto.\n");
+                return;
+            }
+
+            for(int k = i; k < total_usuarios-1; k++){
+                usuarios[k] = usuarios[k+1];
             }
 
             total_usuarios--;
@@ -218,7 +223,7 @@ void emprestimos_usuarios(){
 
              printf("Livros emprestados:\n");
              for(int j = 0; j < *total_emprestimos; j++){
-                 if(usuarios[i].matricula == emprestimos[j].matricula){
+                 if(usuarios[i].matricula == emprestimos[j].matricula_usuario){
                      for(int k = 0; k < *total_livros; k++){
                          if(emprestimos[j].codigo == livros[k].codigo){
                              printf("Livro: %s\n", livros[k].titulo);
