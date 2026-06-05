@@ -237,8 +237,7 @@ void emprestimos_usuarios(){
          }
      }
 
-     if(!encontrado){
+     if(!encontrado)
          printf("Usuário não encontrado.\n");
-         return;
-     }
+
 }
