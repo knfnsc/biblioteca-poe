@@ -11,7 +11,7 @@ Usuario * acessar_struct_usuarios(){
 }
 
 int * acessar_total_usuarios(){
-    return *total_usuarios;
+    return &total_usuarios;
 }
 
 void carregar_usuarios(){
@@ -22,7 +22,7 @@ void carregar_usuarios(){
         return;
 
     fread(&total_usuarios, sizeof(int), 1, arquivo_usuarios);
-    usuarios = malloc(total_usuarios*sizeof(usuarios));
+    usuarios = malloc(total_usuarios*sizeof(Usuario));
     fread(usuarios, sizeof(Usuario), total_usuarios, arquivo_usuarios);
     fclose(arquivo_usuarios);
 }
@@ -60,7 +60,7 @@ void cadastrar_usuarios(){
     tratar_string(novo_usuario.curso);
 
     usuarios = realloc(usuario, (total_usuarios+1)*sizeof(Usuario));
-    usuarios[total_usarios] = novo_usuario;
+    usuarios[total_usuarios] = novo_usuario;
     total_usuarios++;
 
     salvar_usuarios();
@@ -117,14 +117,14 @@ void buscar_usuarios_nome(){
 void atualizar_usuarios(){
     int encontrado = 0;
     printf("Matrícula do usuário:\n");
-    matricula = inteiro_valido();
+    int matricula = inteiro_valido();
 
     for(int i = 0; i < total_usuarios; i++){//laço relacionado com a busca dentro da struct usuarios
         if(usuarios[i].matricula == matricula){//comparar a matrícula digitada pelo usuario com as matrículas salvas na struct usuario
             encontrado = 1;
             printf("Novo nome:\n");
             fgets(usuarios[i].nome, sizeof(usuarios[i].nome), stdin);
-            tratar_string(usuario[i].nome);
+            tratar_string(usuarios[i].nome);
 
             printf("Novo curso:\n");
             fgets(usuarios[i].curso, sizeof(usuarios[i].curso), stdin);
@@ -171,7 +171,7 @@ void remover_usuarios(){
 
             encontrado = 1;
 
-            for(int j = 0; j < total_usuarios-1; j++){
+            for(int j = i; j < total_usuarios-1; j++){
                 usuarios[j] = usuarios[j+1];
             }
 
