@@ -2,6 +2,7 @@
 #include "../include/emprestimos.h"
 #include "../include/livros.h"
 #include "../include/utilitarios.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -69,7 +70,7 @@ void buscar_usuarios_matricula() {
     return;
   }
 
-  int encontrado = 0;
+  bool encontrado = false;
   printf("Inserir matrícula do usuario: ");
   unsigned long long matricula = inteiro_valido();
 
@@ -77,7 +78,7 @@ void buscar_usuarios_matricula() {
     if (usuarios[i].matricula ==
         matricula) { // comparar a matrícula digitada pelo usuário com as
                      // matrículas salvas na struct usuario
-      encontrado = 1;
+      encontrado = true;
       printf("matrícula: %llu\n", usuarios[i].matricula);
       printf("nome: %s\n", usuarios[i].nome);
       printf("curso: %s\n", usuarios[i].curso);
@@ -90,7 +91,7 @@ void buscar_usuarios_matricula() {
 }
 
 void buscar_usuarios_nome() {
-  int encontrado = 0;
+  bool encontrado = false;
 
   char nome[100];
   printf("Inserir nome completo do usuário:\n");
@@ -103,7 +104,7 @@ void buscar_usuarios_nome() {
     if (strcmp(nome, usuarios[i].nome) ==
         0) { // comparar o nome digitado pelo usuario com os nomes salvos na
              // struct usuario
-      encontrado = 1;
+      encontrado = true;
       printf("matrícula: %llu\n", usuarios[i].matricula);
       printf("nome: %s\n", usuarios[i].nome);
       printf("curso: %s\n", usuarios[i].curso);
@@ -117,7 +118,7 @@ void buscar_usuarios_nome() {
 }
 
 void atualizar_usuario() {
-  int encontrado = 0;
+  bool encontrado = false;
   printf("Matrícula do usuário: ");
   unsigned long long matricula = inteiro_valido();
 
@@ -126,7 +127,7 @@ void atualizar_usuario() {
     if (usuarios[i].matricula ==
         matricula) { // comparar a matrícula digitada pelo usuario com as
                      // matrículas salvas na struct usuario
-      encontrado = 1;
+      encontrado = true;
       printf("Novo nome: ");
       fgets(usuarios[i].nome, sizeof(usuarios[i].nome), stdin);
       tratar_string(usuarios[i].nome);
@@ -171,14 +172,14 @@ void remover_usuario() {
   }
 
   unsigned long long matricula;
-  int encontrado = 0;
+  bool encontrado = false;
   printf("Inserir matrícula do usuário: ");
   matricula = inteiro_valido();
 
   for (unsigned long long i = 0; i < qtd_usuarios; i++) {
 
     if (usuarios[i].matricula == matricula) {
-      encontrado = 1;
+      encontrado = true;
 
       if (usuarios[i].qtd_emprestimos_ativos != 0) {
         printf("Remoção não autorizada. O usuário possui empréstimos em "
@@ -215,13 +216,13 @@ void emprestimos_usuario() {
   unsigned long long *qtd_livros = qtd_livros_();
 
   unsigned long long matricula;
-  int encontrado = 0;
+  bool encontrado = false;
   printf("Inserir matrícula do usuário: ");
   matricula = inteiro_valido();
 
   for (unsigned long long i = 0; i < qtd_usuarios; i++) {
     if (usuarios[i].matricula == matricula) {
-      encontrado = 1;
+      encontrado = true;
 
       if (usuarios[i].qtd_emprestimos_ativos == 0) {
         printf("Usuário sem empréstimos ativos.\n");

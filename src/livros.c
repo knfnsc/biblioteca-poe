@@ -1,5 +1,6 @@
 #include "../include/livros.h"
 #include "../include/utilitarios.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,7 +91,7 @@ void listar_livros() {
 
 void buscar_livro_codigo() {
   unsigned long long codigo;
-  int encontrado = 0;
+  bool encontrado = false;
 
   printf("digite o código: ");
   scanf("%llu", &codigo);
@@ -104,7 +105,7 @@ void buscar_livro_codigo() {
       printf("ano: %d\n", livros[i].ano);
       printf("gênero: %s\n", livros[i].genero);
 
-      encontrado = 1;
+      encontrado = true;
       break;
     }
   }
@@ -115,7 +116,7 @@ void buscar_livro_codigo() {
 
 void buscar_livro_titulo() {
   char busca[100];
-  int encontrado = 0;
+  bool encontrado = false;
 
   printf("digite parte do título: ");
   scanf("%[^\n]", busca);
@@ -127,7 +128,7 @@ void buscar_livro_titulo() {
       printf("título: %s\n", livros[i].titulo);
       printf("autor: %s\n", livros[i].autor);
 
-      encontrado = 1;
+      encontrado = true;
     }
   }
 
@@ -137,7 +138,7 @@ void buscar_livro_titulo() {
 
 void atualizar_livro() {
   unsigned long long codigo;
-  int encontrado = 0;
+  bool encontrado = false;
 
   printf("digite o código do livro: ");
   scanf("%llu", &codigo);
@@ -165,7 +166,7 @@ void atualizar_livro() {
 
       printf("Livro atualizado.\n");
 
-      encontrado = 1;
+      encontrado = true;
       break;
     }
   }
@@ -176,7 +177,7 @@ void atualizar_livro() {
 
 void remover_livro() {
   unsigned long long codigo;
-  int encontrado = 0;
+  bool encontrado = false;
 
   printf("digite o código do livro: ");
   scanf("%llu", &codigo);
@@ -195,7 +196,7 @@ void remover_livro() {
 
       printf("Livro removido.\n");
 
-      encontrado = 1;
+      encontrado = true;
       break;
     }
   }
