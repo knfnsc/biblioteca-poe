@@ -13,7 +13,7 @@ run:
 
 # apaga o binário
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) *.dat
 
 # formata o código
 format:

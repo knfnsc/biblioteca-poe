@@ -69,7 +69,7 @@ void acessar_livros() {
     printf("Cadastrar         [1]\n");
     printf("Listar            [2]\n");
     printf("Buscar por código [3]\n");
-    printf("uscar por título  [4]\n");
+    printf("Buscar por título [4]\n");
     printf("Atualizar         [5]\n");
     printf("Remover           [6]\n");
     printf("Voltar            [0]\n");

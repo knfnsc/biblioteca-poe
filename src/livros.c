@@ -1,4 +1,5 @@
 #include "../include/livros.h"
+#include "../include/utilitarios.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,18 +44,23 @@ void cadastrar_livro() {
 
   printf("título: ");
   scanf(" %[^\n]", novo.titulo);
+  limpar_buffer();
 
   printf("autor: ");
   scanf(" %[^\n]", novo.autor);
+  limpar_buffer();
 
   printf("ano: ");
   scanf("%d", &novo.ano);
+  limpar_buffer();
 
   printf("gênero: ");
   scanf(" %[^\n]", novo.genero);
+  limpar_buffer();
 
   printf("quantidade de exemplares: ");
   scanf("%hu", &novo.qtd_total);
+  limpar_buffer();
 
   novo.qtd_disponivel = novo.qtd_total;
   livros = realloc(livros, (qtd_livros + 1) * sizeof(Livro));
@@ -88,6 +94,7 @@ void buscar_livro_codigo() {
 
   printf("digite o código: ");
   scanf("%llu", &codigo);
+  limpar_buffer();
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo == codigo) {
@@ -112,6 +119,7 @@ void buscar_livro_titulo() {
 
   printf("digite parte do título: ");
   scanf("%[^\n]", busca);
+  limpar_buffer();
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (strstr(livros[i].titulo, busca) != NULL) {
@@ -133,20 +141,25 @@ void atualizar_livro() {
 
   printf("digite o código do livro: ");
   scanf("%llu", &codigo);
+  limpar_buffer();
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo == codigo) {
       printf("novo título: ");
       scanf("%[^\n]", livros[i].titulo);
+      limpar_buffer();
 
       printf("novo autor: ");
       scanf("%[^\n]", livros[i].autor);
+      limpar_buffer();
 
       printf("novo ano: ");
       scanf("%d", &livros[i].ano);
+      limpar_buffer();
 
       printf("novo gênero: ");
       scanf("%[^\n]", livros[i].genero);
+      limpar_buffer();
 
       salvar_livros();
 
@@ -167,6 +180,7 @@ void remover_livro() {
 
   printf("digite o código do livro: ");
   scanf("%llu", &codigo);
+  limpar_buffer();
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo == codigo) {

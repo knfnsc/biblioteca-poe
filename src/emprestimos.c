@@ -86,11 +86,11 @@ void registrar_emprestimo() {
   bool usuario_encontrado = false;
   for (unsigned long long i = 0; i < *qtd_usuarios; i++) {
     if (matricula_usuario == usuarios[i].matricula) {
-      usuario_encontrado = true;
       if (usuarios[i].qtd_emprestimos_ativos == 3) {
         printf("Número máximo de empréstimos realizados!\n");
         return;
       }
+      usuario_encontrado = true;
       break;
     }
   }
@@ -109,6 +109,10 @@ void registrar_emprestimo() {
   bool livro_encontrado = false;
   for (unsigned long long i = 0; i < *qtd_livros; i++) {
     if (codigo_livro == livros[i].codigo) {
+      if (livros[i].qtd_disponivel == 0) {
+        printf("Esse livro não possui exemplares disponíveis.\n");
+        return;
+      }
       livro_encontrado = true;
       break;
     }
@@ -116,6 +120,15 @@ void registrar_emprestimo() {
   if (!livro_encontrado) {
     printf("Nenhum livro com esse código encontrado!\n");
     return;
+  }
+
+  for (unsigned long long i = 0; i < qtd_emprestimos; i++) {
+    if (matricula_usuario == emprestimos[i].matricula_usuario &&
+        codigo_livro == emprestimos[i].codigo_livro &&
+        !emprestimos[i].devolvido) {
+      printf("Não é possível emprestar o mesmo livro duas vezes.\n");
+      return;
+    }
   }
 
   const time_t segundos_no_dia = 24 * 3600;
@@ -178,6 +191,28 @@ void registrar_devolucao() {
       time_t agora = time(NULL);
       emprestimos[i].data_devolucao = agora;
       emprestimos[i].devolvido = true;
+
+      Usuario *usuarios = usuarios_();
+      unsigned long long *qtd_usuarios = qtd_usuarios_();
+
+      for (unsigned long long i = 0; i < *qtd_usuarios; i++) {
+        if (matricula_usuario == usuarios[i].matricula) {
+          usuarios[i].qtd_emprestimos_ativos--;
+          salvar_usuarios();
+          break;
+        }
+      }
+
+      Livro *livros = livros_();
+      unsigned long long *qtd_livros = qtd_livros_();
+
+      for (unsigned long long i = 0; i < *qtd_livros; i++) {
+        if (codigo_livro == livros[i].codigo) {
+          livros[i].qtd_disponivel++;
+          salvar_livros();
+          break;
+        }
+      }
 
       salvar_emprestimos();
       printf("Devolução registrada!\n");
