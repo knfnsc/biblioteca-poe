@@ -1,7 +1,7 @@
 CC     = gcc
 CFLAGS = -Wall -Wextra -Iinclude
 SRC    = $(wildcard src/*.c)
-TARGET = build/biblioteca-poe.out
+TARGET = biblioteca-poe.out
 
 # compila tudo
 $(TARGET): $(SRC)

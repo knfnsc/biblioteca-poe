@@ -2,26 +2,26 @@
 #define LIVROS_H
 
 typedef struct {
-  int codigo;
-  char titulo[100];
-  char autor[100];
-  int ano;
-  char genero[50];
-  int qtd_total;
-  int qtd_disponivel;
+  unsigned long long codigo;
+  char titulo[255];
+  char autor[255];
+  unsigned int ano;
+  char genero[255];
+  unsigned short qtd_total;
+  unsigned short qtd_disponivel;
 } Livro;
-
-extern Livro *livros;
-extern int total_livros;
 
 void carregar_livros();
 void salvar_livros();
 
 void cadastrar_livro();
 void listar_livros();
-void buscar_livro_lodigo();
+void buscar_livro_codigo();
 void buscar_livro_titulo();
 void atualizar_livro();
 void remover_livro();
+
+Livro *livros_();
+unsigned long long *qtd_livros_();
 
 #endif

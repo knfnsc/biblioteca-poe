@@ -1,72 +1,39 @@
+#include "../include/emprestimos.h"
+#include "../include/livros.h"
+#include "../include/usuarios.h"
 #include "../include/utilitarios.h"
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-#define ENDERECO_EMPRESTIMOS "emprestimos.dat"
+extern unsigned long long qtd_emprestimos;
+extern Emprestimo *emprestimos;
 
-uint64_t qtd_emprestimos;
-struct emprestimo *emprestimos;
-
-/*
-int main(void) {
-  emprestimos = malloc(sizeof(struct emprestimo) * 1000);
+void carregar_emprestimos() {
+  emprestimos = malloc(sizeof(Emprestimo) * 1000);
   if (emprestimos == NULL) {
     printf("Falha ao alocar memória!");
-    sair(1);
   }
 
-  FILE *arquivo_emprestimos = fopen(ENDERECO_EMPRESTIMOS, "rb");
-  if (arquivo_emprestimos != NULL) {
-    fread(&qtd_emprestimos, sizeof(uint64_t), 1, arquivo_emprestimos);
-    fread(emprestimos, sizeof(struct emprestimo), qtd_emprestimos,
-          arquivo_emprestimos);
-    fclose(arquivo_emprestimos);
-  }
-
-  limpar_tela();
-
-  for (;;) {
-    char opcao;
-    printf("Livros                   %15s\n", "[1]");
-    printf("Usuários                 %15s\n", "[2]");
-    printf("Empréstimos e Devoluções %15s\n", "[3]");
-    printf("Relatórios               %15s\n", "[4]");
-    printf("Sair                     %15s\n", "[5]");
-
-    int erro = scanf("%c", &opcao);
-    if (erro == EOF) {
-      sair(0);
-    }
-    limpar_buffer();
-
-    limpar_tela();
-
-    switch (opcao) {
-    case '1':
-      acessar_livros();
-      break;
-    case '2':
-      acessar_usuarios();
-      break;
-    case '3':
-      acessar_emprestimos_e_devolucoes();
-      break;
-    case '4':
-      acessar_relatorios();
-      break;
-    case '5':
-      sair(0);
-      break;
-    default:
-      printf("Opção inválida.\n");
-      break;
-    }
+  FILE *arquivo = fopen("emprestimos.dat", "rb");
+  if (arquivo != NULL) {
+    fread(&qtd_emprestimos, sizeof(unsigned long long), 1, arquivo);
+    fread(emprestimos, sizeof(Emprestimo), qtd_emprestimos, arquivo);
+    fclose(arquivo);
   }
 }
 
-*/
+void salvar_emprestimos() {
+  FILE *arquivo = fopen("emprestimos.dat", "wb");
+  if (arquivo == NULL) {
+    return;
+  }
+
+  // escreve o contador de empréstimos (primeiros 64 bits do arquivo)
+  fwrite(&qtd_emprestimos, sizeof(unsigned long long), 1, arquivo);
+  fwrite(emprestimos, sizeof(Emprestimo), qtd_emprestimos, arquivo);
+  fclose(arquivo);
+}
 
 void ler_emprestimos() {
   if (qtd_emprestimos == 0) {
@@ -77,10 +44,10 @@ void ler_emprestimos() {
   // ponteiro de struct para converter "time_t" (segundos) para um formato
   // legível.
   struct tm *data_retirada, *data_prevista, *data_devolucao;
-  uint8_t dia_retirada, dia_prevista, dia_devolucao, mes_retirada, mes_prevista,
-      mes_devolucao;
+  unsigned short dia_retirada, dia_prevista, dia_devolucao, mes_retirada,
+      mes_prevista, mes_devolucao;
 
-  for (uint64_t i = 0; i < qtd_emprestimos; i++) {
+  for (unsigned long long i = 0; i < qtd_emprestimos; i++) {
     data_retirada = localtime(&emprestimos[i].data_retirada);
     dia_retirada = data_retirada->tm_mday;
     mes_retirada = data_retirada->tm_mon + 1;
@@ -89,7 +56,7 @@ void ler_emprestimos() {
     dia_prevista = data_prevista->tm_mday;
     mes_prevista = data_prevista->tm_mon + 1;
 
-    printf("id: %03lu | matrícula: %03lu | código do livro: %03lu"
+    printf("id: %03llu | matrícula: %03llu | código do livro: %03llu"
            " | retirada: %02d/%02d | prazo: %02d/%02d | devolvido: ",
            emprestimos[i].id, emprestimos[i].matricula_usuario,
            emprestimos[i].codigo_livro, dia_retirada, mes_retirada,
@@ -106,32 +73,55 @@ void ler_emprestimos() {
   }
 }
 
-void salvar_emprestimos() {
-  FILE *arquivo_emprestimos = fopen(ENDERECO_EMPRESTIMOS, "wb");
-  if (arquivo_emprestimos != NULL) {
-    // escreve o contador de empréstimos (primeiros 64 bits do arquivo)
-    fwrite(&qtd_emprestimos, sizeof(uint64_t), 1, arquivo_emprestimos);
-    fwrite(emprestimos, sizeof(struct emprestimo), qtd_emprestimos,
-           arquivo_emprestimos);
-    fclose(arquivo_emprestimos);
-  }
-}
-
 void registrar_emprestimo() {
-  uint64_t matricula_usuario, codigo_livro;
+  unsigned long long matricula_usuario, codigo_livro;
 
   printf("Digite a matrícula: ");
-  scanf("%lu", &matricula_usuario);
+  scanf("%llu", &matricula_usuario);
   limpar_buffer();
 
+  Usuario *usuarios = usuarios_();
+  unsigned long long *qtd_usuarios = qtd_usuarios_();
+
+  bool usuario_encontrado = false;
+  for (unsigned long long i = 0; i < *qtd_usuarios; i++) {
+    if (matricula_usuario == usuarios[i].matricula) {
+      usuario_encontrado = true;
+      if (usuarios[i].qtd_emprestimos_ativos == 3) {
+        printf("Número máximo de empréstimos realizados!\n");
+        return;
+      }
+      break;
+    }
+  }
+  if (!usuario_encontrado) {
+    printf("Nenhum usuário com essa matrícula encontrado!\n");
+    return;
+  }
+
   printf("Digite o código do livro: ");
-  scanf("%lu", &codigo_livro);
+  scanf("%llu", &codigo_livro);
   limpar_buffer();
+
+  Livro *livros = livros_();
+  unsigned long long *qtd_livros = qtd_livros_();
+
+  bool livro_encontrado = false;
+  for (unsigned long long i = 0; i < *qtd_livros; i++) {
+    if (codigo_livro == livros[i].codigo) {
+      livro_encontrado = true;
+      break;
+    }
+  }
+  if (!livro_encontrado) {
+    printf("Nenhum livro com esse código encontrado!\n");
+    return;
+  }
 
   const time_t segundos_no_dia = 24 * 3600;
   time_t agora = time(NULL);
   time_t prazo = agora + (14 * segundos_no_dia);
-  struct emprestimo novo_emprestimo = {
+  Emprestimo novo_emprestimo = {
       .id = qtd_emprestimos + 1,
       .matricula_usuario = matricula_usuario,
       .codigo_livro = codigo_livro,
@@ -143,6 +133,20 @@ void registrar_emprestimo() {
 
   emprestimos[qtd_emprestimos] = novo_emprestimo;
   qtd_emprestimos++;
+  for (unsigned long long i = 0; i < *qtd_usuarios; i++) {
+    if (matricula_usuario == usuarios[i].matricula) {
+      usuarios[i].qtd_emprestimos_ativos++;
+      salvar_usuarios();
+      break;
+    }
+  }
+  for (unsigned long long i = 0; i < *qtd_livros; i++) {
+    if (codigo_livro == livros[i].codigo) {
+      livros[i].qtd_disponivel--;
+      salvar_livros();
+      break;
+    }
+  }
 
   salvar_emprestimos();
   printf("Empréstimo registrado!\n");
@@ -154,18 +158,18 @@ void registrar_devolucao() {
     return;
   }
 
-  uint64_t matricula_usuario, codigo_livro;
+  unsigned long long matricula_usuario, codigo_livro;
 
   printf("Digite a matrícula: ");
-  scanf("%lu", &matricula_usuario);
+  scanf("%llu", &matricula_usuario);
   limpar_buffer();
 
   printf("Digite o código do livro: ");
-  scanf("%lu", &codigo_livro);
+  scanf("%llu", &codigo_livro);
   limpar_buffer();
 
   bool encontrado;
-  for (uint64_t i = 0; i < qtd_emprestimos; i++) {
+  for (unsigned long long i = 0; i < qtd_emprestimos; i++) {
     encontrado = emprestimos[i].matricula_usuario == matricula_usuario &&
                  emprestimos[i].codigo_livro == codigo_livro &&
                  !emprestimos[i].devolvido;
@@ -184,49 +188,6 @@ void registrar_devolucao() {
   printf("Nenhum empréstimo correspondente encontrado.\n");
 };
 
-/*
-void acessar_emprestimos_e_devolucoes() {
-  for (;;) {
-    char opcao;
-    printf("Empréstimos %15s\n", "[1]");
-    printf("Devoluções  %15s\n", "[2]");
-    printf("Registros   %15s\n", "[3]");
-    printf("Voltar      %15s\n", "[4]");
+Emprestimo *emprestimos_() { return emprestimos; }
 
-    int erro = scanf("%c", &opcao);
-    limpar_buffer();
-    if (erro == EOF) {
-      sair(0);
-    }
-
-    limpar_tela();
-
-    switch (opcao) {
-    case '1':
-      registrar_emprestimo();
-      break;
-    case '2':
-      registrar_devolucao();
-      break;
-    case '3':
-      ler_emprestimos();
-      break;
-    case '4':
-      return;
-      break;
-    default:
-      printf("Opção inválida.\n");
-      break;
-    }
-
-    printf("-----------------------------------\n");
-
-  }
-}
-*/
-
-void sair(int codigo_de_erro) {
-  printf("Encerrando programa...\n");
-  free(emprestimos);
-  exit(codigo_de_erro);
-}
+unsigned long long *qtd_emprestimos_() { return &qtd_emprestimos; }

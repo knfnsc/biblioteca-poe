@@ -1,62 +1,20 @@
-#include <stdbool.h>
-#include <stdint.h>
-#include <time.h>
+#ifndef UTILITARIOS_H
+#define UTILITARIOS_H
 
-typedef enum {
-  ROMANCE,
-  FICCAO_CIENTIFICA,
-  FANTASIA,
-  MISTERIO,
-  TERROR,
-  BIOGRAFIA,
-  HISTORIA,
-  POESIA,
-  AVENTURA,
-  DRAMA
-} genero_t;
+// objetivo: padronizar a escrita dentro dos arquivos, facilitando leitura e
+// pesquisa
+void tratar_string(char *string);
 
-typedef enum {
-  ENGENHARIA,
-  ADMINISTRACAO,
-  MEDICINA,
-  DIREITO,
-  PSICOLOGIA,
-  COMPUTACAO,
-} curso_t;
-
-struct livro {
-  uint64_t codigo;
-  char *titulo;
-  char *autor;
-  time_t ano;
-  genero_t genero;
-  uint8_t qtd_total;
-  uint8_t qtd_disponivel;
-  uint8_t total_emprestimos;
-};
-
-struct aluno {
-  uint64_t matricula;
-  char *nome;
-  curso_t curso;
-  uint8_t qtd_emprestimos_ativos;
-};
-
-struct emprestimo {
-  uint64_t id;
-  uint64_t matricula_usuario;
-  uint64_t codigo_livro;
-  time_t data_retirada;
-  time_t data_prevista;
-  time_t data_devolucao;
-  bool devolvido;
-};
-
+// objetivo: evitar problemas quando houver múltiplos tipos de entrada de texto
+// para o usuário, evitando conflitos com fgets e scanf, por exemplo
 void limpar_buffer();
+
+// objetivo: tornar a interface de interação com o usuário mais dinâmica e limpa
 void limpar_tela();
 
-void acessar_livros();
-void acessar_usuarios();
-void acessar_emprestimos_e_devolucoes();
-void acessar_relatorios();
-void sair(int codigo_de_erro);
+// objetivo: garantir que os valores passados pelo usuário sejam os adequados
+// para executar as funções dentro do programa + evitar problemas de buffer
+int inteiro_valido();
+char char_valido();
+
+#endif
