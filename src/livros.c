@@ -9,24 +9,26 @@ extern unsigned long long qtd_livros;
 extern Livro *livros;
 
 void carregar_livros() {
-  livros = malloc(sizeof(Livro) * 1000);
-  if (livros == NULL) {
+  if ((livros = malloc(sizeof(Livro) * 1000)) == NULL) {
     printf("Falha ao alocar memória!");
+    exit(1);
   }
 
   FILE *arquivo = fopen("livros.dat", "rb");
-  if (arquivo == NULL)
-    return;
-  fread(&qtd_livros, sizeof(unsigned long long), 1, arquivo);
-  livros = malloc(qtd_livros * sizeof(Livro));
-  fread(livros, sizeof(Livro), qtd_livros, arquivo);
-  fclose(arquivo);
+  if (arquivo != NULL) {
+    fread(&qtd_livros, sizeof(unsigned long long), 1, arquivo);
+    fread(livros, sizeof(Livro), qtd_livros, arquivo);
+    fclose(arquivo);
+  }
 }
 
 void salvar_livros() {
   FILE *arquivo = fopen("livros.dat", "wb");
-  if (arquivo == NULL)
-    return;
+  if (arquivo == NULL) {
+    printf("Falha ao salvar livros!\n");
+    exit(1);
+  }
+
   fwrite(&qtd_livros, sizeof(unsigned long long), 1, arquivo);
   fwrite(livros, sizeof(Livro), qtd_livros, arquivo);
   fclose(arquivo);
@@ -44,24 +46,19 @@ void cadastrar_livro() {
   novo.codigo = maior_codigo + 1;
 
   printf("título: ");
-  scanf(" %[^\n]", novo.titulo);
-  limpar_buffer();
+  string_valido(novo.titulo);
 
   printf("autor: ");
-  scanf(" %[^\n]", novo.autor);
-  limpar_buffer();
+  string_valido(novo.autor);
 
   printf("ano: ");
-  scanf("%d", &novo.ano);
-  limpar_buffer();
+  inteiro_valido((unsigned long long *)&novo.ano);
 
   printf("gênero: ");
-  scanf(" %[^\n]", novo.genero);
-  limpar_buffer();
+  string_valido(novo.genero);
 
   printf("quantidade de exemplares: ");
-  scanf("%hu", &novo.qtd_total);
-  limpar_buffer();
+  inteiro_valido((unsigned long long *)&novo.qtd_total);
 
   novo.qtd_disponivel = novo.qtd_total;
   livros = realloc(livros, (qtd_livros + 1) * sizeof(Livro));
@@ -86,6 +83,9 @@ void listar_livros() {
     printf("gênero: %s\n", livros[i].genero);
     printf("quantidade total: %d\n", livros[i].qtd_total);
     printf("disponíveis: %d\n", livros[i].qtd_disponivel);
+    if (i != qtd_livros - 1)
+      printf("-----------------------------------------------------------------"
+             "\n");
   }
 }
 
@@ -94,8 +94,7 @@ void buscar_livro_codigo() {
   bool encontrado = false;
 
   printf("digite o código: ");
-  scanf("%llu", &codigo);
-  limpar_buffer();
+  inteiro_valido(&codigo);
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo == codigo) {
@@ -115,18 +114,19 @@ void buscar_livro_codigo() {
 }
 
 void buscar_livro_titulo() {
-  char busca[100];
+  char busca[256];
   bool encontrado = false;
 
   printf("digite parte do título: ");
-  scanf("%[^\n]", busca);
-  limpar_buffer();
+  string_valido(busca);
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (strstr(livros[i].titulo, busca) != NULL) {
       printf("código: %llu\n", livros[i].codigo);
       printf("título: %s\n", livros[i].titulo);
       printf("autor: %s\n", livros[i].autor);
+      printf("ano: %d\n", livros[i].ano);
+      printf("gênero: %s\n", livros[i].genero);
 
       encontrado = true;
     }
@@ -141,26 +141,21 @@ void atualizar_livro() {
   bool encontrado = false;
 
   printf("digite o código do livro: ");
-  scanf("%llu", &codigo);
-  limpar_buffer();
+  inteiro_valido(&codigo);
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo == codigo) {
       printf("novo título: ");
-      scanf("%[^\n]", livros[i].titulo);
-      limpar_buffer();
+      tratar_string(livros[i].titulo);
 
       printf("novo autor: ");
-      scanf("%[^\n]", livros[i].autor);
-      limpar_buffer();
+      tratar_string(livros[i].autor);
 
       printf("novo ano: ");
-      scanf("%d", &livros[i].ano);
-      limpar_buffer();
+      inteiro_valido((unsigned long long *)&livros[i].ano);
 
       printf("novo gênero: ");
-      scanf("%[^\n]", livros[i].genero);
-      limpar_buffer();
+      tratar_string(livros[i].genero);
 
       salvar_livros();
 
@@ -180,17 +175,19 @@ void remover_livro() {
   bool encontrado = false;
 
   printf("digite o código do livro: ");
-  scanf("%llu", &codigo);
-  limpar_buffer();
+  inteiro_valido(&codigo);
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo == codigo) {
+      if (livros[i].qtd_total != livros[i].qtd_disponivel) {
+        printf("Não é possível remover. Livro possui empréstimos ativos.\n");
+        return;
+      }
       for (unsigned long long j = i; j < qtd_livros - 1; j++) {
         livros[j] = livros[j + 1];
       }
 
       qtd_livros--;
-
       livros = realloc(livros, qtd_livros * sizeof(Livro));
       salvar_livros();
 

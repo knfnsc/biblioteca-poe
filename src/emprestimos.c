@@ -10,9 +10,11 @@ extern unsigned long long qtd_emprestimos;
 extern Emprestimo *emprestimos;
 
 void carregar_emprestimos() {
-  emprestimos = malloc(sizeof(Emprestimo) * 1000);
-  if (emprestimos == NULL) {
+  // Inline if.
+  // Declara a variável "emprestimos" e checa se operação ocorreu corretamente.
+  if ((emprestimos = malloc(sizeof(Emprestimo) * 1000)) == NULL) {
     printf("Falha ao alocar memória!");
+    exit(1);
   }
 
   FILE *arquivo = fopen("emprestimos.dat", "rb");
@@ -26,7 +28,8 @@ void carregar_emprestimos() {
 void salvar_emprestimos() {
   FILE *arquivo = fopen("emprestimos.dat", "wb");
   if (arquivo == NULL) {
-    return;
+    printf("Falha ao salvar arquivo!\n");
+    exit(1);
   }
 
   // escreve o contador de empréstimos (primeiros 64 bits do arquivo)
@@ -48,6 +51,9 @@ void ler_emprestimos() {
       mes_prevista, mes_devolucao;
 
   for (unsigned long long i = 0; i < qtd_emprestimos; i++) {
+    // localtime retorna um ponteiro de struct (struct tm *),
+    // cada propriedade do struct é uma parte da data.
+    // P. ex.: tm_mon -> mês do ano; retorna de 0-11, por isso o "+ 1".
     data_retirada = localtime(&emprestimos[i].data_retirada);
     dia_retirada = data_retirada->tm_mday;
     mes_retirada = data_retirada->tm_mon + 1;
@@ -56,6 +62,9 @@ void ler_emprestimos() {
     dia_prevista = data_prevista->tm_mday;
     mes_prevista = data_prevista->tm_mon + 1;
 
+    // %llu é o identificador do tipo unsigned long long, 03 significa que
+    // possui três algarismos 0 de sobra.
+    // P. ex.: 1 -> 0001.
     printf("id: %03llu | matrícula: %03llu | código do livro: %03llu"
            " | retirada: %02d/%02d | prazo: %02d/%02d | devolvido: ",
            emprestimos[i].id, emprestimos[i].matricula_usuario,
@@ -77,8 +86,7 @@ void registrar_emprestimo() {
   unsigned long long matricula_usuario, codigo_livro;
 
   printf("Digite a matrícula: ");
-  scanf("%llu", &matricula_usuario);
-  limpar_buffer();
+  inteiro_valido(&matricula_usuario);
 
   Usuario *usuarios = usuarios_();
   unsigned long long *qtd_usuarios = qtd_usuarios_();
@@ -100,8 +108,7 @@ void registrar_emprestimo() {
   }
 
   printf("Digite o código do livro: ");
-  scanf("%llu", &codigo_livro);
-  limpar_buffer();
+  inteiro_valido(&codigo_livro);
 
   Livro *livros = livros_();
   unsigned long long *qtd_livros = qtd_livros_();
@@ -132,7 +139,9 @@ void registrar_emprestimo() {
   }
 
   const time_t segundos_no_dia = 24 * 3600;
-  time_t agora = time(NULL);
+  time_t agora =
+      time(NULL); // time recebe um tempo inicial como parâmetro, como estamos
+                  // partindo do momento atual, usamos NULL.
   time_t prazo = agora + (14 * segundos_no_dia);
   Emprestimo novo_emprestimo = {
       .id = qtd_emprestimos + 1,
@@ -140,7 +149,8 @@ void registrar_emprestimo() {
       .codigo_livro = codigo_livro,
       .data_retirada = agora,
       .data_prevista = prazo,
-      .data_devolucao = 0,
+      .data_devolucao =
+          0, // placeholder para uma data que ainda não foi definida
       .devolvido = false,
   };
 
@@ -174,12 +184,10 @@ void registrar_devolucao() {
   unsigned long long matricula_usuario, codigo_livro;
 
   printf("Digite a matrícula: ");
-  scanf("%llu", &matricula_usuario);
-  limpar_buffer();
+  inteiro_valido(&matricula_usuario);
 
   printf("Digite o código do livro: ");
-  scanf("%llu", &codigo_livro);
-  limpar_buffer();
+  inteiro_valido(&codigo_livro);
 
   bool encontrado;
   for (unsigned long long i = 0; i < qtd_emprestimos; i++) {

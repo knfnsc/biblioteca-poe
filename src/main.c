@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define SEPARADOR                                                              \
+  "-----------------------------------------------------------------\n"
+
+// Inicializa as variáveis e vetores dos arquivos
 unsigned long long qtd_usuarios = 0;
 Usuario *usuarios = NULL;
 
@@ -15,21 +19,71 @@ Livro *livros = NULL;
 unsigned long long qtd_emprestimos = 0;
 Emprestimo *emprestimos = NULL;
 
-void acessar_usuarios() {
+void acessar_usuarios();
+void acessar_livros();
+void acessar_emp_e_dev();
+void acessar_relatorios();
+
+int main() {
+  carregar_usuarios();
+  carregar_livros();
+  carregar_emprestimos();
+
+  printf("Bem-vindo a Biblioteca Poe!\n");
+
+  // Loop principal da aplicação, permite que o programa execute até que o
+  // usuário decida encerra-lo
   for (;;) {
-    printf("Cadastrar   [1]\n");
-    printf("Buscar      [2]\n");
-    printf("Listar      [3]\n");
-    printf("Atualizar   [4]\n");
-    printf("Remover     [5]\n");
-    printf("Empréstimos [6]\n");
-    printf("Voltar      [0]\n");
+    printf("Usuários    [1]\n");
+    printf("Livros      [2]\n");
+    printf("Empréstimos [3]\n");
+    printf("Relátorios  [4]\n");
+    printf("Sair        [0]\n");
 
     char opcao;
-    if (scanf("%c", &opcao) == EOF) {
-      return;
+    char_valido(&opcao);
+
+    limpar_tela();
+
+    switch (opcao) {
+    case '1':
+      acessar_usuarios();
+      break;
+    case '2':
+      acessar_livros();
+      break;
+    case '3':
+      acessar_emp_e_dev();
+      break;
+    case '4':
+      acessar_relatorios();
+      break;
+    case '0':
+      printf("Encerrando programa...\n");
+      free(usuarios);
+      free(livros);
+      free(emprestimos);
+      return 0;
+    default:
+      printf("Opção inválida.\n");
+      break;
     }
-    limpar_buffer();
+  }
+}
+
+void acessar_usuarios() {
+  for (;;) {
+    printf("Cadastrar        [1]\n");
+    printf("Buscar matrícula [2]\n");
+    printf("Buscar nome      [3]\n");
+    printf("Listar           [4]\n");
+    printf("Atualizar        [5]\n");
+    printf("Remover          [6]\n");
+    printf("Empréstimos      [7]\n");
+    printf("Voltar           [0]\n");
+
+    char opcao;
+    char_valido(&opcao);
 
     limpar_tela();
 
@@ -38,29 +92,31 @@ void acessar_usuarios() {
       cadastrar_usuario();
       break;
     case '2':
-      printf("ola");
+      buscar_usuario_matricula();
       break;
     case '3':
-      listar_usuarios();
+      buscar_usuario_nome();
       break;
     case '4':
-      atualizar_usuario();
+      listar_usuarios();
       break;
     case '5':
-      remover_usuario();
+      atualizar_usuario();
       break;
     case '6':
+      remover_usuario();
+      break;
+    case '7':
       emprestimos_usuario();
       break;
     case '0':
       return;
-      break;
     default:
       printf("Opção inválida.\n");
       break;
     }
 
-    printf("-----------------------------------\n");
+    printf(SEPARADOR);
   }
 };
 
@@ -75,10 +131,7 @@ void acessar_livros() {
     printf("Voltar            [0]\n");
 
     char opcao;
-    if (scanf("%c", &opcao) == EOF) {
-      return;
-    }
-    limpar_buffer();
+    char_valido(&opcao);
 
     limpar_tela();
 
@@ -107,9 +160,11 @@ void acessar_livros() {
       printf("Opcão inválida.\n");
     }
 
-    printf("-----------------------------------\n");
+    printf(SEPARADOR);
   }
 };
+
+void acessar_relatorios() { printf("[TODO]\n"); }
 
 void acessar_emp_e_dev() {
   for (;;) {
@@ -119,10 +174,7 @@ void acessar_emp_e_dev() {
     printf("Voltar      [0]\n");
 
     char opcao;
-    if (scanf("%c", &opcao) == EOF) {
-      return;
-    }
-    limpar_buffer();
+    char_valido(&opcao);
 
     limpar_tela();
 
@@ -143,54 +195,6 @@ void acessar_emp_e_dev() {
       break;
     }
 
-    printf("-----------------------------------\n");
+    printf(SEPARADOR);
   }
-}
-
-int main() {
-  carregar_usuarios();
-  carregar_livros();
-  carregar_emprestimos();
-
-  printf("Bem-vindo a Biblioteca Poe!\n");
-
-  for (;;) {
-    printf("Usuários    [1]\n");
-    printf("Livros      [2]\n");
-    printf("Empréstimos [3]\n");
-    printf("Relátorios  [4]\n");
-    printf("Sair        [0]\n");
-
-    char opcao;
-    if (scanf("%c", &opcao) == EOF) {
-      return 0;
-    }
-    limpar_buffer();
-
-    limpar_tela();
-
-    switch (opcao) {
-    case '1':
-      acessar_usuarios();
-      break;
-    case '2':
-      acessar_livros();
-      break;
-    case '3':
-      acessar_emp_e_dev();
-      break;
-    case '0':
-      printf("Encerrando programa...\n");
-      return 0;
-    default:
-      printf("Opção inválida.\n");
-      break;
-    }
-  }
-
-  free(usuarios);
-  free(livros);
-  free(emprestimos);
-
-  return 0;
 }

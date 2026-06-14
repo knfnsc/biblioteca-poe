@@ -3,10 +3,10 @@
 
 typedef struct {
   unsigned long long codigo;
-  char titulo[255];
-  char autor[255];
+  char titulo[256];
+  char autor[256];
   unsigned int ano;
-  char genero[255];
+  char genero[256];
   unsigned short qtd_total;
   unsigned short qtd_disponivel;
 } Livro;
