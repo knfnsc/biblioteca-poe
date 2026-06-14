@@ -17,6 +17,9 @@ void alunos_atrasados() {
     return; // Encerra a função mais cedo
   }
 
+  FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  char *buffer = malloc(sizeof(char) * 1024);
+
   // time(NULL) pega o horário atual do sistema em segundos (timestamp Unix)
   time_t agora = time(NULL);
   struct tm *prazo; // Ponteiro para uma estrutura que divide o tempo em dia,
@@ -47,14 +50,20 @@ void alunos_atrasados() {
 
       // Exibe os dados formatados. O '%02d' garante que números menores que 10
       // ganhem um zero à esquerda (ex: 05/09).
-      printf("matrícula: %llu | código do livro: %llu | prazo: %02d/%02d | "
-             "atraso: %d dia(s)\n",
-             emprestimos[i].matricula_usuario, emprestimos[i].codigo_livro, dia,
-             mes, dias_atraso);
+      sprintf(buffer,
+              "matrícula: %llu | código do livro: %llu | prazo: %02d/%02d | "
+              "atraso: %d dia(s)\n",
+              emprestimos[i].matricula_usuario, emprestimos[i].codigo_livro,
+              dia, mes, dias_atraso);
+      printf("%s", buffer);
+      fprintf(arquivo, "%s", buffer);
 
       encontrado = true;
     }
   }
+
+  fclose(arquivo);
+  free(buffer);
 
   if (!encontrado)
     printf("Nenhum aluno possui atrasos.\n");
@@ -113,11 +122,19 @@ void livros_mais_emprestados() {
     }
   }
 
+  FILE *arquivo = fopen("livros_mais_emprestados.txt", "w");
+  char *buffer = malloc(sizeof(char) * 1024);
+
   // Agora será mostrado os livros mais emprestados.
   for (unsigned long long i = 0; i < *qtd_livros; i++) {
-    printf("%llu. %s | empréstimos: %llu\n", i + 1, ranking[i].titulo,
-           ranking[i].total_emprestimos);
+    sprintf(buffer, "%llu. %s | empréstimos: %llu\n", i + 1, ranking[i].titulo,
+            ranking[i].total_emprestimos);
+    printf("%s", buffer);
+    fprintf(arquivo, "%s", buffer);
   }
+
+  fclose(arquivo);
+  free(buffer);
 
   free(ranking);
 }
@@ -132,14 +149,23 @@ void acervo_disponivel() {
     return;
   }
 
+  FILE *arquivo = fopen("acervo_disponivel.txt", "w");
+  char *buffer = malloc(sizeof(char) * 1024);
+
   for (unsigned long long i = 0; i < *qtd_livros; i++) {
     if (livros[i].qtd_disponivel >
-        0) { // Verificando se o livro está disponivel. Esse if faz isso.
-      printf("código: %llu | título: %s | autor: %s | disponíveis: %hu\n",
-             livros[i].codigo, livros[i].titulo, livros[i].autor,
-             livros[i].qtd_disponivel);
+        0) { // Verificando se o livro está disponivel.
+      sprintf(buffer,
+              "código: %llu | título: %s | autor: %s | disponíveis: %hu\n",
+              livros[i].codigo, livros[i].titulo, livros[i].autor,
+              livros[i].qtd_disponivel);
+      printf("%s", buffer);
+      fprintf(arquivo, "%s", buffer);
     }
   }
+
+  fclose(arquivo);
+  free(buffer);
 }
 
 // Essa função é responsavel por mostrar o historico de emprestimos do usuario.
@@ -154,11 +180,17 @@ void historico_usuario() {
   unsigned long long *qtd_emprestimos = qtd_emprestimos_();
   Emprestimo *emprestimos = emprestimos_();
 
+  FILE *arquivo = fopen("historico_usuario.txt", "w");
+  char *buffer = malloc(sizeof(char) * 1024);
+
   // Verificando se a matricula do usuario está certa.
   bool encontrado = false;
   for (unsigned long long i = 0; i < *qtd_usuarios; i++) {
     if (usuarios[i].matricula == matricula) {
-      printf("Histórico de %s:\n", usuarios[i].nome);
+      sprintf(buffer, "Histórico de %s:\n", usuarios[i].nome);
+      printf("%s", buffer);
+      fprintf(arquivo, "%s", buffer);
+
       encontrado = true;
       break;
     }
@@ -181,8 +213,10 @@ void historico_usuario() {
   unsigned short dia_retirada, mes_retirada, dia_prevista, mes_prevista;
 
   // Procura por todos os empréstimo que o usuario fez
+  bool possui_emprestimos = false;
   for (unsigned long long i = 0; i < *qtd_emprestimos; i++) {
     if (emprestimos[i].matricula_usuario == matricula) {
+      possui_emprestimos = true;
 
       data_retirada = localtime(&emprestimos[i].data_retirada);
       dia_retirada = data_retirada->tm_mday;
@@ -192,23 +226,36 @@ void historico_usuario() {
       dia_prevista = data_prevista->tm_mday;
       mes_prevista = data_prevista->tm_mon + 1;
 
-      // Agora, após ajeitar os ponteiros para as posições, mostramos as
-      // informações do emprestimo.
-      printf("id: %llu | codigo do livro: %llu | retirada: %02d/%02d | prazo: "
-             "%02d/%02d | devolvido: ",
-             emprestimos[i].id, emprestimos[i].codigo_livro, dia_retirada,
-             mes_retirada, dia_prevista, mes_prevista);
-
       // Verificando se o livro já foi devolvido. Para isso, comparamos as datas
       // de devolução
+      char status_devolucao[64];
       if (emprestimos[i].devolvido) {
         data_devolucao = localtime(&emprestimos[i].data_devolucao);
-        printf("%02d/%02d\n", data_devolucao->tm_mday,
-               data_devolucao->tm_mon + 1);
+        sprintf(status_devolucao, "%02d/%02d", data_devolucao->tm_mday,
+                data_devolucao->tm_mon + 1);
       } else {
         // Se não devolveu, indica que a entrega está pendente
-        printf("pendente\n");
+        sprintf(status_devolucao, "pendente");
       }
+
+      // Agora, após ajeitar os ponteiros para as posições, mostramos as
+      // informações do emprestimo.
+      sprintf(buffer,
+              "id: %llu | codigo do livro: %llu | retirada: %02d/%02d | prazo: "
+              "%02d/%02d | devolvido: %s\n",
+              emprestimos[i].id, emprestimos[i].codigo_livro, dia_retirada,
+              mes_retirada, dia_prevista, mes_prevista, status_devolucao);
+      printf("%s", buffer);
+      fprintf(arquivo, "%s", buffer);
     }
   }
+
+  if (!possui_emprestimos) {
+    printf(buffer, "Não possui empréstimos registrados.\n");
+    printf("%s", buffer);
+    fprintf(arquivo, "%s", buffer);
+  }
+
+  fclose(arquivo);
+  free(buffer);
 }

@@ -9,7 +9,7 @@ extern unsigned long long qtd_livros;
 extern Livro *livros;
 
 void carregar_livros() {
-  if ((livros = malloc(sizeof(Livro) * 1000)) == NULL) {
+  if ((livros = malloc(sizeof(Livro) * 1024)) == NULL) {
     printf("Falha ao alocar memória!");
     exit(1);
   }

@@ -14,7 +14,7 @@ extern unsigned long long qtd_usuarios;
 extern Usuario *usuarios;
 
 void carregar_usuarios() {
-  if ((usuarios = malloc(sizeof(Usuario) * 1000)) == NULL) {
+  if ((usuarios = malloc(sizeof(Usuario) * 1024)) == NULL) {
     printf("Falha ao alocar memória!");
     exit(1);
   }

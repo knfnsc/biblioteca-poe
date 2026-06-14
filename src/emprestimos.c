@@ -12,7 +12,7 @@ extern Emprestimo *emprestimos;
 void carregar_emprestimos() {
   // Inline if.
   // Declara a variável "emprestimos" e checa se operação ocorreu corretamente.
-  if ((emprestimos = malloc(sizeof(Emprestimo) * 1000)) == NULL) {
+  if ((emprestimos = malloc(sizeof(Emprestimo) * 1024)) == NULL) {
     printf("Falha ao alocar memória!");
     exit(1);
   }
@@ -62,23 +62,24 @@ void ler_emprestimos() {
     dia_prevista = data_prevista->tm_mday;
     mes_prevista = data_prevista->tm_mon + 1;
 
-    // %llu é o identificador do tipo unsigned long long, 03 significa que
-    // possui três algarismos 0 de sobra.
-    // P. ex.: 1 -> 0001.
-    printf("id: %03llu | matrícula: %03llu | código do livro: %03llu"
-           " | retirada: %02d/%02d | prazo: %02d/%02d | devolvido: ",
-           emprestimos[i].id, emprestimos[i].matricula_usuario,
-           emprestimos[i].codigo_livro, dia_retirada, mes_retirada,
-           dia_prevista, mes_prevista);
-
+    char status_devolucao[64];
     if (emprestimos[i].devolvido) {
       data_devolucao = localtime(&emprestimos[i].data_devolucao);
       dia_devolucao = data_devolucao->tm_mday;
       mes_devolucao = data_devolucao->tm_mon + 1;
-      printf("%02d/%02d\n", dia_devolucao, mes_devolucao);
+      sprintf(status_devolucao, "%02d/%02d", dia_devolucao, mes_devolucao);
     } else {
-      printf("pendente\n");
+      sprintf(status_devolucao, "pendente");
     }
+
+    // %llu é o identificador do tipo unsigned long long, 03 significa que
+    // possui três algarismos 0 de sobra.
+    // P. ex.: 1 -> 0001.
+    printf("id: %03llu | matrícula: %03llu | código do livro: %03llu"
+           " | retirada: %02d/%02d | prazo: %02d/%02d | devolvido: %s\n",
+           emprestimos[i].id, emprestimos[i].matricula_usuario,
+           emprestimos[i].codigo_livro, dia_retirada, mes_retirada,
+           dia_prevista, mes_prevista, status_devolucao);
   }
 }
 

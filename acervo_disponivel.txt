@@ -1,0 +1,2 @@
+código: 1 | título: A | autor: B | disponíveis: 1
+código: 2 | título: D | autor: e | disponíveis: 2
