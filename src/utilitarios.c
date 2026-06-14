@@ -10,10 +10,20 @@ void limpar_buffer() {
 
   int c;
   while ((c = getchar()) != '\n' && c != EOF) {
-    if (c == EOF) {
-      clearerr(stdin);
-    }
-  };
+    // loop vazio
+  }
+
+  if (c == EOF) {
+    clearerr(stdin); // limpa o flag de EOF para destravar o scanf
+  }
+}
+
+void limpar_linha() {
+  /*
+   * Limpa a linha onde o cursor está no terminal.
+   */
+  printf("\e[2K\r"); // senquência ANSI para apagar a linha on o cursor está.
+  fflush(stdout);    // garante que o buffer seja enviado ao terminal
 }
 
 void limpar_tela() {
@@ -22,7 +32,7 @@ void limpar_tela() {
    */
   printf("\e[2J\e[H"); // sequência ANSI para mover o cursor para a posição (1,
                        // 1) e limpar a tela.
-  fflush(stdout);      // garante que o buffer seja enviado ao terminal
+  fflush(stdout);      //
 }
 
 void tratar_string(char *str) {
@@ -74,23 +84,12 @@ void inteiro_valido(unsigned long long *var) {
    * sujeira no buffer -> retorna o que o usuário digitou;
    */
 
-  for (;;) {
-    int retorno = scanf("%llu", var);
-
-    if (retorno == 1) {
-      limpar_buffer();
-      return;
-    }
-
-    if (retorno == EOF) {
-      clearerr(stdin);
-    } else {
-      limpar_buffer();
-    }
-
+  while (scanf("%llu", var) != 1) {
     limpar_buffer();
+    limpar_linha();
     printf("Não é um número válido. Digite novamente: ");
   }
+  limpar_buffer();
 }
 
 void char_valido(char *var) {
@@ -98,23 +97,12 @@ void char_valido(char *var) {
    * for um caractere válido, repete a leitura, ignora whitespaces antes
    * de capturar o caractere, tratando EOF para não travar a execução */
 
-  for (;;) {
-    int retorno = scanf(" %c", var);
-
-    if (retorno == 1) {
-      limpar_buffer();
-      return;
-    }
-
-    if (retorno == EOF) {
-      clearerr(stdin);
-    } else {
-      limpar_buffer();
-    }
-
+  while (scanf(" %c", var) != 1) {
     limpar_buffer();
-    printf("Caractere inválido. Digite novamente: ");
+    limpar_linha();
+    printf("Não é um caractere válido. Digite novamente: ");
   }
+  limpar_buffer();
 }
 
 void string_valido(char *var) {
@@ -122,22 +110,10 @@ void string_valido(char *var) {
    * for uma string válida, repete a leitura, tratando EOF para não
    * travar a execução e aplicando o tratamento de capitalização */
 
-  for (;;) {
-    int retorno = scanf("%s", var);
-
-    if (retorno == 1) {
-      limpar_buffer();
-      tratar_string(var);
-      return;
-    }
-
-    if (retorno == EOF) {
-      clearerr(stdin);
-    } else {
-      limpar_buffer();
-    }
-
+  while (scanf(" %[^\n]", var) != 1) {
     limpar_buffer();
-    printf("String inválida. Digite novamente: ");
+    limpar_linha();
+    printf("Não é um texto válido. Digite novamente: ");
   }
+  limpar_buffer();
 }
