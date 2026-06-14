@@ -84,8 +84,7 @@ void listar_livros() {
     printf("quantidade total: %d\n", livros[i].qtd_total);
     printf("disponíveis: %d\n", livros[i].qtd_disponivel);
     if (i != qtd_livros - 1)
-      printf("-----------------------------------------------------------------"
-             "\n");
+      printf(SEPARADOR);
   }
 }
 
@@ -146,16 +145,16 @@ void atualizar_livro() {
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo == codigo) {
       printf("novo título: ");
-      tratar_string(livros[i].titulo);
+      string_valido(livros[i].titulo);
 
       printf("novo autor: ");
-      tratar_string(livros[i].autor);
+      string_valido(livros[i].autor);
 
       printf("novo ano: ");
       inteiro_valido((unsigned long long *)&livros[i].ano);
 
       printf("novo gênero: ");
-      tratar_string(livros[i].genero);
+      string_valido(livros[i].genero);
 
       salvar_livros();
 

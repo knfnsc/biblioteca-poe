@@ -1,6 +1,10 @@
 #ifndef UTILITARIOS_H
 #define UTILITARIOS_H
 
+#define SEPARADOR                                                              \
+  "--------------------------------------------------------------------------" \
+  "----------------------\n"
+
 // evita problemas quando houver múltiplos tipos de entrada de texto
 // para o usuário, evitando conflitos com fgets e scanf, por exemplo
 void limpar_buffer();

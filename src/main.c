@@ -1,13 +1,11 @@
 #include "../include/emprestimos.h"
 #include "../include/livros.h"
+#include "../include/relatorios.h"
 #include "../include/usuarios.h"
 #include "../include/utilitarios.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define SEPARADOR                                                              \
-  "-----------------------------------------------------------------\n"
 
 // Inicializa as variáveis e vetores dos arquivos
 unsigned long long qtd_usuarios = 0;
@@ -37,7 +35,7 @@ int main() {
     printf("Usuários    [1]\n");
     printf("Livros      [2]\n");
     printf("Empréstimos [3]\n");
-    printf("Relátorios  [4]\n");
+    printf("Relatórios  [4]\n");
     printf("Sair        [0]\n");
 
     char opcao;
@@ -164,7 +162,42 @@ void acessar_livros() {
   }
 };
 
-void acessar_relatorios() { printf("[TODO]\n"); }
+void acessar_relatorios() {
+  for (;;) {
+    printf("Alunos atrasados        [1]\n");
+    printf("Livros mais emprestados [2]\n");
+    printf("Acervo disponível       [3]\n");
+    printf("Histórico de usuário    [4]\n");
+    printf("Voltar                  [0]\n");
+
+    char opcao;
+    char_valido(&opcao);
+
+    limpar_tela();
+
+    switch (opcao) {
+    case '1':
+      alunos_atrasados();
+      break;
+    case '2':
+      livros_mais_emprestados();
+      break;
+    case '3':
+      acervo_disponivel();
+      break;
+    case '4':
+      historico_usuario();
+      break;
+    case '0':
+      return;
+    default:
+      printf("Opção inválida.\n");
+      break;
+    }
+
+    printf(SEPARADOR);
+  };
+}
 
 void acessar_emp_e_dev() {
   for (;;) {
