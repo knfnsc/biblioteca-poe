@@ -57,5 +57,5 @@ dkms.conf
 # banco de dados
 *.dat
 
-# binarios
-build/
+# relatórios
+*.txt
