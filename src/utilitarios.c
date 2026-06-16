@@ -1,5 +1,6 @@
 #include "../include/utilitarios.h"
 #include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -10,7 +11,6 @@ void limpar_buffer() {
 
   int c;
   while ((c = getchar()) != '\n' && c != EOF) {
-    // loop vazio
   }
 
   if (c == EOF) {
@@ -43,13 +43,13 @@ void tratar_string(char *str) {
   // limpa o buffer, trocando o "\n" por "\0"
 
   int tam = strlen(str);
-  int p_nova = 1; // verifica se é início de uma nova palavra
+  bool p_nova = true; // verifica se é início de uma nova palavra
 
   for (int i = 0; i < tam; i++) {
     if (str[i] == ' ') {
-      p_nova = 1; // nova palavra se inicia após espaço
+      p_nova = true; // nova palavra se inicia após espaço
     } else if (p_nova) {
-      p_nova = 0;
+      p_nova = false;
       str[i] = toupper(str[i]); // primeira letra maiúscula
     } else {
       str[i] = tolower(str[i]); // demais letras minúsculas
@@ -60,21 +60,32 @@ void tratar_string(char *str) {
   int qtd = sizeof(prep) / sizeof(*prep);
 
   char copia[1024] = "";
-  char *palavra = strtok(str, " "); // quebra a string nos espaços
+  strcpy(copia, str);
+
+  char resultado[1024] = "";
+  char *palavra = strtok(copia, " "); // quebra a string nos espaços
+  bool primeira = true;
 
   while (palavra) {
+    // Adiciona espaço entre palavras (exceto antes da primeira)
+    if (!primeira) {
+      strcat(resultado, " ");
+    }
+    primeira = false;
+
     for (int i = 0; i < qtd; i++) {
       if (strcmp(palavra, prep[i]) == 0) {
         palavra[0] = tolower(palavra[0]); // preposição volta para minúscula
+        break;
       }
     }
-    strcat(copia, palavra);
-    strcat(copia, " ");
+
+    strcat(resultado, palavra);
     palavra = strtok(NULL, " ");
   }
 
-  copia[strlen(copia) - 1] = '\0'; // remove o último espaço adicionado
-  strcpy(str, copia); // copia o resultado de volta para a string original
+  // copia o resultado de volta para a string original
+  strcpy(str, resultado);
 }
 
 void inteiro_valido(unsigned long long *var) {
@@ -115,5 +126,7 @@ void string_valido(char *var) {
     limpar_linha();
     printf("Não é um texto válido. Digite novamente: ");
   }
+
   limpar_buffer();
+  tratar_string(var);
 }

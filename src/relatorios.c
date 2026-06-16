@@ -18,7 +18,15 @@ void alunos_atrasados() {
   }
 
   FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  if (arquivo == NULL) {
+    printf("Falha ao abrir arquivo!\n");
+    return;
+  }
   char *buffer = malloc(sizeof(char) * 1024);
+  if (buffer == NULL) {
+    printf("Falha ao alocar memoria!\n");
+    return;
+  }
 
   // time(NULL) pega o horário atual do sistema em segundos (timestamp Unix)
   time_t agora = time(NULL);
@@ -37,6 +45,8 @@ void alunos_atrasados() {
       // Dividimos por (24 * 3600), que é o total de segundos em um dia (24h *
       // 60min * 60seg), para converter o resultado de segundos para dias de
       // atraso.
+      // Converte de 'double' (retorno de difftime) para 'unsigned short'
+      // (dias_atraso).
       dias_atraso =
           (unsigned short)(difftime(agora, emprestimos[i].data_prevista) /
                            (24 * 3600));
@@ -123,8 +133,16 @@ void livros_mais_emprestados() {
     }
   }
 
-  FILE *arquivo = fopen("livros_mais_emprestados.txt", "w");
+  FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  if (arquivo == NULL) {
+    printf("Falha ao abrir arquivo!\n");
+    return;
+  }
   char *buffer = malloc(sizeof(char) * 1024);
+  if (buffer == NULL) {
+    printf("Falha ao alocar memoria!\n");
+    return;
+  }
 
   // Agora será mostrado os livros mais emprestados.
   for (unsigned long long i = 0; i < *qtd_livros; i++) {
@@ -150,8 +168,16 @@ void acervo_disponivel() {
     return;
   }
 
-  FILE *arquivo = fopen("acervo_disponivel.txt", "w");
+  FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  if (arquivo == NULL) {
+    printf("Falha ao abrir arquivo!\n");
+    return;
+  }
   char *buffer = malloc(sizeof(char) * 1024);
+  if (buffer == NULL) {
+    printf("Falha ao alocar memoria!\n");
+    return;
+  }
 
   for (unsigned long long i = 0; i < *qtd_livros; i++) {
     if (livros[i].qtd_disponivel >
@@ -181,8 +207,16 @@ void historico_usuario() {
   unsigned long long *qtd_emprestimos = qtd_emprestimos_();
   Emprestimo *emprestimos = emprestimos_();
 
-  FILE *arquivo = fopen("historico_usuario.txt", "w");
+  FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  if (arquivo == NULL) {
+    printf("Falha ao abrir arquivo!\n");
+    return;
+  }
   char *buffer = malloc(sizeof(char) * 1024);
+  if (buffer == NULL) {
+    printf("Falha ao alocar memoria!\n");
+    return;
+  }
 
   // Verificando se a matricula do usuario está certa.
   bool encontrado = false;

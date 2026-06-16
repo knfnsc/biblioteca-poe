@@ -67,14 +67,15 @@ void ler_emprestimos() {
       data_devolucao = localtime(&emprestimos[i].data_devolucao);
       dia_devolucao = data_devolucao->tm_mday;
       mes_devolucao = data_devolucao->tm_mon + 1;
+      // escreve para um buffer, para evitar a repetição do código.
       sprintf(status_devolucao, "%02d/%02d", dia_devolucao, mes_devolucao);
     } else {
       sprintf(status_devolucao, "pendente");
     }
 
-    // %llu é o identificador do tipo unsigned long long, 03 significa que
+    // %llu é o identificador do tipo 'unsigned long long', 03 significa que
     // possui três algarismos 0 de sobra.
-    // P. ex.: 1 -> 0001.
+    // P. ex.: 1 -> 001.
     printf("id: %03llu | matrícula: %03llu | código do livro: %03llu"
            " | retirada: %02d/%02d | prazo: %02d/%02d | devolvido: %s\n",
            emprestimos[i].id, emprestimos[i].matricula_usuario,
@@ -94,6 +95,8 @@ void registrar_emprestimo() {
 
   bool usuario_encontrado = false;
   for (unsigned long long i = 0; i < *qtd_usuarios; i++) {
+    // caso encontre uma matricula correspondente no array de usuários, realiza
+    // a verificação da qtd. empréstimos e atualiza o status de 'encontrado'.
     if (matricula_usuario == usuarios[i].matricula) {
       if (usuarios[i].qtd_emprestimos_ativos == 3) {
         printf("Número máximo de empréstimos realizados!\n");
@@ -157,6 +160,7 @@ void registrar_emprestimo() {
 
   emprestimos[qtd_emprestimos] = novo_emprestimo;
   qtd_emprestimos++;
+
   for (unsigned long long i = 0; i < *qtd_usuarios; i++) {
     if (matricula_usuario == usuarios[i].matricula) {
       usuarios[i].qtd_emprestimos_ativos++;
@@ -164,6 +168,7 @@ void registrar_emprestimo() {
       break;
     }
   }
+
   for (unsigned long long i = 0; i < *qtd_livros; i++) {
     if (codigo_livro == livros[i].codigo) {
       livros[i].qtd_disponivel--;
@@ -194,10 +199,11 @@ void registrar_devolucao() {
   for (unsigned long long i = 0; i < qtd_emprestimos; i++) {
     encontrado = emprestimos[i].matricula_usuario == matricula_usuario &&
                  emprestimos[i].codigo_livro == codigo_livro &&
-                 !emprestimos[i].devolvido;
+                 !emprestimos[i].devolvido; // realiza a verificação antes para
+                                            // preservar a estética do código.
 
     if (encontrado) {
-      time_t agora = time(NULL);
+      time_t agora = time(NULL); // pega o tempo atual.
       emprestimos[i].data_devolucao = agora;
       emprestimos[i].devolvido = true;
 

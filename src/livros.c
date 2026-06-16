@@ -40,6 +40,7 @@ void cadastrar_livro() {
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo > maior_codigo)
+      // encontra o maior código contido na array.
       maior_codigo = livros[i].codigo;
   }
 
@@ -52,6 +53,9 @@ void cadastrar_livro() {
   string_valido(novo.autor);
 
   printf("ano: ");
+  // faz o casting do tipo 'unsigned int *' ('&novo.ano') para
+  // 'unsigned long long *', pois esse é o tipo do
+  // argumento que 'inteiro_valido' recebe.
   inteiro_valido((unsigned long long *)&novo.ano);
 
   printf("gênero: ");
@@ -61,8 +65,10 @@ void cadastrar_livro() {
   inteiro_valido((unsigned long long *)&novo.qtd_total);
 
   novo.qtd_disponivel = novo.qtd_total;
+  // realoca a memória da array para abranger mais livros.
   livros = realloc(livros, (qtd_livros + 1) * sizeof(Livro));
-  livros[qtd_livros] = novo;
+  livros[qtd_livros] =
+      novo; // atribui a última posição da array para o livro mais recente.
   qtd_livros++;
   salvar_livros();
 
@@ -83,6 +89,7 @@ void listar_livros() {
     printf("gênero: %s\n", livros[i].genero);
     printf("quantidade total: %d\n", livros[i].qtd_total);
     printf("disponíveis: %d\n", livros[i].qtd_disponivel);
+    // caso seja o último livro da lista, printa o separador.
     if (i != qtd_livros - 1)
       printf(SEPARADOR);
   }
@@ -120,6 +127,9 @@ void buscar_livro_titulo() {
   string_valido(busca);
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
+    // procura a string 'busca' na string 'livros[i].titulo'. Caso a segunda não
+    // esteja contida na primeira, retorna NULL. Caso contrário, retorna a parte
+    // da string que está contida (!= NULL).
     if (strstr(livros[i].titulo, busca) != NULL) {
       printf("código: %llu\n", livros[i].codigo);
       printf("título: %s\n", livros[i].titulo);
@@ -171,22 +181,24 @@ void atualizar_livro() {
 
 void remover_livro() {
   unsigned long long codigo;
-  bool encontrado = false;
 
   printf("digite o código do livro: ");
   inteiro_valido(&codigo);
 
+  bool encontrado = false;
   for (unsigned long long i = 0; i < qtd_livros; i++) {
     if (livros[i].codigo == codigo) {
       if (livros[i].qtd_total != livros[i].qtd_disponivel) {
         printf("Não é possível remover. Livro possui empréstimos ativos.\n");
         return;
       }
+      // atualiza a lista para remover espaços vazios
       for (unsigned long long j = i; j < qtd_livros - 1; j++) {
         livros[j] = livros[j + 1];
       }
 
       qtd_livros--;
+      // realoca a memória do vetor para preservar espaço.
       livros = realloc(livros, qtd_livros * sizeof(Livro));
       salvar_livros();
 
