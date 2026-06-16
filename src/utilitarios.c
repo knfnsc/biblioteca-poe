@@ -59,7 +59,7 @@ void tratar_string(char *str) {
   const char *prep[] = {"De", "Da", "Do", "Dos", "Das", "E"};
   int qtd = sizeof(prep) / sizeof(*prep);
 
-  char copia[256] = "";
+  char copia[1024] = "";
   char *palavra = strtok(str, " "); // quebra a string nos espaços
 
   while (palavra) {

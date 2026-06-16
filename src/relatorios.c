@@ -55,6 +55,7 @@ void alunos_atrasados() {
               "atraso: %d dia(s)\n",
               emprestimos[i].matricula_usuario, emprestimos[i].codigo_livro,
               dia, mes, dias_atraso);
+      // Escreve no terminale no arquivo.
       printf("%s", buffer);
       fprintf(arquivo, "%s", buffer);
 
