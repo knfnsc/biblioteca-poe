@@ -81,9 +81,9 @@ void listar_livros() {
     return;
   }
 
-  for (unsigned long long i = 0; i < qtd_livros; i++) {
-    printf("código: %llu\n", livros[i].codigo);
-    printf("título: %s\n", livros[i].titulo);
+  for (unsigned long long i = 0; i < qtd_livros; i++) { // percorre a array de livros e confere se o unsignd long long 'i' é menor que a quantidade de livros cadastrados. 
+    printf("título: %s\n", livros[i].titulo); //Caso seja, mostra as informações do livro na posição 'i'.
+    printf("código: %llu\n", livros[i].codigo);// Mostra todas as informações de cada livro cadastrado.
     printf("autor: %s\n", livros[i].autor);
     printf("ano: %d\n", livros[i].ano);
     printf("gênero: %s\n", livros[i].genero);
@@ -102,8 +102,8 @@ void buscar_livro_codigo() {
   printf("digite o código: ");
   inteiro_valido(&codigo);
 
-  for (unsigned long long i = 0; i < qtd_livros; i++) {
-    if (livros[i].codigo == codigo) {
+  for (unsigned long long i = 0; i < qtd_livros; i++) { // percorre a array de livros e confere se o unsignd long long 'i' é menor que a quantidade de livros cadastrados.
+    if (livros[i].codigo == codigo) { // se for, mostra as informações do livro buscado na posição 'i'.
       printf("código: %llu\n", livros[i].codigo);
       printf("título: %s\n", livros[i].titulo);
       printf("autor: %s\n", livros[i].autor);
@@ -115,7 +115,7 @@ void buscar_livro_codigo() {
     }
   }
 
-  if (!encontrado)
+  if (!encontrado) // se for diferente de 'true' do encontrado, retorna que o lirvo não foi encontrado.
     printf("Livro não encontrado.\n");
 }
 
@@ -130,8 +130,8 @@ void buscar_livro_titulo() {
     // procura a string 'busca' na string 'livros[i].titulo'. Caso a segunda não
     // esteja contida na primeira, retorna NULL. Caso contrário, retorna a parte
     // da string que está contida (!= NULL).
-    if (strstr(livros[i].titulo, busca) != NULL) {
-      printf("código: %llu\n", livros[i].codigo);
+    if (strstr(livros[i].titulo, busca) != NULL) { //compara a string 'busca' com o título do livro na posição 'i'. 
+      printf("código: %llu\n", livros[i].codigo); 
       printf("título: %s\n", livros[i].titulo);
       printf("autor: %s\n", livros[i].autor);
       printf("ano: %d\n", livros[i].ano);
@@ -161,7 +161,7 @@ void atualizar_livro() {
       string_valido(livros[i].autor);
 
       printf("novo ano: ");
-      inteiro_valido((unsigned long long *)&livros[i].ano);
+      inteiro_valido((unsigned long long *)&livros[i].ano); //confere se o ano digitado é um número inteiro válido, e caso seja, atribui o valor à variável 'ano' do livro na posição 'i'.
 
       printf("novo gênero: ");
       string_valido(livros[i].genero);
@@ -185,11 +185,11 @@ void remover_livro() {
   printf("digite o código do livro: ");
   inteiro_valido(&codigo);
 
-  bool encontrado = false;
-  for (unsigned long long i = 0; i < qtd_livros; i++) {
-    if (livros[i].codigo == codigo) {
+  bool encontrado = false; // variável booleana para verificar se o livro foi encontrado.
+  for (unsigned long long i = 0; i < qtd_livros; i++) { //se for, percorre a array de livros e confere se o unsignd long long 'i' é menor que a quantidade de livros cadastrados.
+    if (livros[i].codigo == codigo) { // se os coigigos forem iguais, verifica se a quantidade total de livros é diferente da quantidade disponível. Caso seja, retorna que não é possível remover o livro, pois há empréstimos ativos.
       if (livros[i].qtd_total != livros[i].qtd_disponivel) {
-        printf("Não é possível remover. Livro possui empréstimos ativos.\n");
+        printf("Não é possível remover. Livro possui empréstimos ativos.\n"); 
         return;
       }
       // atualiza a lista para remover espaços vazios
@@ -197,7 +197,7 @@ void remover_livro() {
         livros[j] = livros[j + 1];
       }
 
-      qtd_livros--;
+      qtd_livros--; // decrementa a quantidade de livros cadastrados, para que o último livro da lista seja o penúltimo, e assim por diante.
       // realoca a memória do vetor para preservar espaço.
       livros = realloc(livros, qtd_livros * sizeof(Livro));
       salvar_livros();
@@ -213,6 +213,6 @@ void remover_livro() {
     printf("Livro nao encontrado.\n");
 }
 
-Livro *livros_() { return livros; }
+Livro *livros_() { return livros; } // retorna o ponteiro para a array de livros, para que outras partes do programa possam acessar os livros cadastrados.
 
-unsigned long long *qtd_livros_() { return &qtd_livros; }
+unsigned long long *qtd_livros_() { return &qtd_livros; } // retorna o ponteiro para a variável 'qtd_livros', para que outras partes do programa possam acessar a quantidade de livros cadastrados.
