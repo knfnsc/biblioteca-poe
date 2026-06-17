@@ -286,7 +286,7 @@ void historico_usuario() {
   }
 
   if (!possui_emprestimos) {
-    printf(buffer, "Não possui empréstimos registrados.\n");
+    sprintf(buffer, "Não possui empréstimos registrados.\n");
     printf("%s", buffer);
     fprintf(arquivo, "%s", buffer);
   }
