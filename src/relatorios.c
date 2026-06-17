@@ -17,7 +17,7 @@ void alunos_atrasados() {
     return; // Encerra a função mais cedo
   }
 
-  FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  FILE *arquivo = fopen("relatorios.txt", "w");
   if (arquivo == NULL) {
     printf("Falha ao abrir arquivo!\n");
     return;
@@ -133,7 +133,7 @@ void livros_mais_emprestados() {
     }
   }
 
-  FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  FILE *arquivo = fopen("relatorios.txt", "w");
   if (arquivo == NULL) {
     printf("Falha ao abrir arquivo!\n");
     return;
@@ -168,7 +168,7 @@ void acervo_disponivel() {
     return;
   }
 
-  FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  FILE *arquivo = fopen("relatorios.txt", "w");
   if (arquivo == NULL) {
     printf("Falha ao abrir arquivo!\n");
     return;
@@ -207,7 +207,7 @@ void historico_usuario() {
   unsigned long long *qtd_emprestimos = qtd_emprestimos_();
   Emprestimo *emprestimos = emprestimos_();
 
-  FILE *arquivo = fopen("alunos_atrasados.txt", "w");
+  FILE *arquivo = fopen("relatorios.txt", "w");
   if (arquivo == NULL) {
     printf("Falha ao abrir arquivo!\n");
     return;
