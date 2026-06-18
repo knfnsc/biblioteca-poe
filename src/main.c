@@ -120,14 +120,14 @@ void acessar_usuarios() {
 
 void acessar_livros() {
   for (;;) {
-    printf("Cadastrar         [1]\n");
-    printf("Listar            [2]\n");
-    printf("Buscar por código [3]\n");
-    printf("Buscar por título [4]\n");
-    printf("Atualizar         [5]\n");
-    printf("Remover           [6]\n");
-    printf("Consultar empréstimos    [7]\n");
-    printf("Voltar            [0]\n");
+    printf("Cadastrar             [1]\n");
+    printf("Listar                [2]\n");
+    printf("Buscar por código     [3]\n");
+    printf("Buscar por título     [4]\n");
+    printf("Atualizar             [5]\n");
+    printf("Remover               [6]\n");
+    printf("Consultar empréstimos [7]\n");
+    printf("Voltar                [0]\n");
 
     char opcao;
     char_valido(&opcao);
@@ -153,7 +153,7 @@ void acessar_livros() {
     case '6':
       remover_livro();
       break;
-    
+
     case '7':
     consultar_usuarios_livro();
     break;
