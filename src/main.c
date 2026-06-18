@@ -126,6 +126,7 @@ void acessar_livros() {
     printf("Buscar por título [4]\n");
     printf("Atualizar         [5]\n");
     printf("Remover           [6]\n");
+    printf("Consultar empréstimos    [7]\n");
     printf("Voltar            [0]\n");
 
     char opcao;
@@ -152,8 +153,12 @@ void acessar_livros() {
     case '6':
       remover_livro();
       break;
-    case '0':
-      return;
+    
+    case '7':
+    consultar_usuarios_livro();
+    break;
+  case '0':
+  return;
     default:
       printf("Opcão inválida.\n");
     }

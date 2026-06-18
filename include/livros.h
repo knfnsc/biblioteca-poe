@@ -21,6 +21,7 @@ void buscar_livro_codigo();
 void buscar_livro_titulo();
 void atualizar_livro();
 void remover_livro();
+void consultar_usuarios_livro();
 
 Livro *livros_(); // retorna o ponteiro para a array de livros, para que outras partes do programa possam acessar os livros cadastrados.
 unsigned long long *qtd_livros_(); // retorna o ponteiro para a variável 'qtd_livros', para que outras partes do programa possam acessar a quantidade de livros cadastrados.

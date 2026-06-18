@@ -1,5 +1,7 @@
 #include "../include/livros.h"
 #include "../include/utilitarios.h"
+#include "../include/emprestimos.h"
+#include "../include/usuarios.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -211,6 +213,64 @@ void remover_livro() {
 
   if (!encontrado)
     printf("Livro nao encontrado.\n");
+}
+void consultar_usuarios_livro() { // função para consultar os usuários que possuem um livro emprestado.
+  unsigned long long codigo;
+  bool livro_encontrado = false; // variável booleana para verificar se o livro foi encontrado.
+  bool possui_emprestimo = false; // variável booleana para verificar se o livro possui empréstimos ativos.
+
+  printf("digite o codigo do livro: ");
+  inteiro_valido(&codigo); //busca o código do livro e confere se é um número inteiro válido. Caso seja, atribui o valor à variável 'codigo'.
+
+  for (unsigned long long i = 0; i < qtd_livros; i++) {
+    if (livros[i].codigo == codigo) {
+
+      livro_encontrado = true;
+
+      printf("\nLivro encontrado:\n");
+      printf("titulo: %s\n", livros[i].titulo);
+      printf("autor: %s\n", livros[i].autor);
+      printf("codigo: %llu\n", livros[i].codigo);
+
+      Emprestimo *emprestimos = emprestimos_(); // ponteiro para a array de empréstimos, para que seja possível acessar os empréstimos registrados.
+      unsigned long long *qtd_emprestimos = qtd_emprestimos_(); // ponteiro para a variável 'qtd_emprestimos', para que seja possível acessar a quantidade de empréstimos registrados.
+
+      Usuario *usuarios = usuarios_();
+      unsigned long long *qtd_usuarios = qtd_usuarios_(); // ponteiro para a array de usuários, para que seja possível acessar os usuários cadastrados, e ponteiro para a variável 'qtd_usuarios', para que seja possível acessar a quantidade de usuários cadastrados.
+
+      printf("\nUsuarios com este livro emprestado:\n");
+
+      for (unsigned long long j = 0; j < *qtd_emprestimos; j++) {
+
+        if (emprestimos[j].codigo_livro == codigo &&
+            !emprestimos[j].devolvido) {
+
+          for (unsigned long long k = 0; k < *qtd_usuarios; k++) {
+
+            if (usuarios[k].matricula ==
+                emprestimos[j].matricula_usuario) {
+
+              printf("- %s (matricula %llu)\n",
+                     usuarios[k].nome,
+                     usuarios[k].matricula);
+
+              possui_emprestimo = true;
+            }
+          }
+        }
+      }
+
+      if (!possui_emprestimo) {
+        printf("Este livro nao possui emprestimos ativos.\n");
+      }
+
+      return;
+    }
+  }
+
+  if (!livro_encontrado) {
+    printf("Livro nao encontrado.\n");
+  }
 }
 
 Livro *livros_() { return livros; } // retorna o ponteiro para a array de livros, para que outras partes do programa possam acessar os livros cadastrados.
