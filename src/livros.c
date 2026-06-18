@@ -238,7 +238,7 @@ void consultar_usuarios_livro() { // função para consultar os usuários que po
       Usuario *usuarios = usuarios_();
       unsigned long long *qtd_usuarios = qtd_usuarios_(); // ponteiro para a array de usuários, para que seja possível acessar os usuários cadastrados, e ponteiro para a variável 'qtd_usuarios', para que seja possível acessar a quantidade de usuários cadastrados.
 
-      printf("\nUsuarios com este livro emprestado:\n");
+      printf("\nUsuários com este livro emprestado:\n");
 
       for (unsigned long long j = 0; j < *qtd_emprestimos; j++) {
 
@@ -260,11 +260,9 @@ void consultar_usuarios_livro() { // função para consultar os usuários que po
         }
       }
 
-      if (!possui_emprestimo) {
-        printf("Este livro nao possui emprestimos ativos.\n");
-      }
-
-      return;
+      if (!possui_emprestimo) 
+        printf("Este livro não possui emprestimos ativos.\n");
+  
     }
   }
 
