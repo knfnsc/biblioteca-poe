@@ -83,7 +83,7 @@ void listar_livros() {
     return;
   }
 
-  for (unsigned long long i = 0; i < qtd_livros; i++) { // percorre a array de livros e confere se o unsignd long long 'i' é menor que a quantidade de livros cadastrados. 
+  for (unsigned long long i = 0; i < qtd_livros; i++) { // percorre a array de livros e confere se o unsignd long long 'i' é menor que a quantidade de livros cadastrados.
     printf("título: %s\n", livros[i].titulo); //Caso seja, mostra as informações do livro na posição 'i'.
     printf("código: %llu\n", livros[i].codigo);// Mostra todas as informações de cada livro cadastrado.
     printf("autor: %s\n", livros[i].autor);
@@ -132,8 +132,8 @@ void buscar_livro_titulo() {
     // procura a string 'busca' na string 'livros[i].titulo'. Caso a segunda não
     // esteja contida na primeira, retorna NULL. Caso contrário, retorna a parte
     // da string que está contida (!= NULL).
-    if (strstr(livros[i].titulo, busca) != NULL) { //compara a string 'busca' com o título do livro na posição 'i'. 
-      printf("código: %llu\n", livros[i].codigo); 
+    if (strstr(livros[i].titulo, busca) != NULL) { //compara a string 'busca' com o título do livro na posição 'i'.
+      printf("código: %llu\n", livros[i].codigo);
       printf("título: %s\n", livros[i].titulo);
       printf("autor: %s\n", livros[i].autor);
       printf("ano: %d\n", livros[i].ano);
@@ -191,7 +191,7 @@ void remover_livro() {
   for (unsigned long long i = 0; i < qtd_livros; i++) { //se for, percorre a array de livros e confere se o unsignd long long 'i' é menor que a quantidade de livros cadastrados.
     if (livros[i].codigo == codigo) { // se os coigigos forem iguais, verifica se a quantidade total de livros é diferente da quantidade disponível. Caso seja, retorna que não é possível remover o livro, pois há empréstimos ativos.
       if (livros[i].qtd_total != livros[i].qtd_disponivel) {
-        printf("Não é possível remover. Livro possui empréstimos ativos.\n"); 
+        printf("Não é possível remover. Livro possui empréstimos ativos.\n");
         return;
       }
       // atualiza a lista para remover espaços vazios
@@ -212,14 +212,15 @@ void remover_livro() {
   }
 
   if (!encontrado)
-    printf("Livro nao encontrado.\n");
+    printf("Livro não encontrado.\n");
 }
+
 void consultar_usuarios_livro() { // função para consultar os usuários que possuem um livro emprestado.
   unsigned long long codigo;
   bool livro_encontrado = false; // variável booleana para verificar se o livro foi encontrado.
   bool possui_emprestimo = false; // variável booleana para verificar se o livro possui empréstimos ativos.
 
-  printf("digite o codigo do livro: ");
+  printf("digite o código do livro: ");
   inteiro_valido(&codigo); //busca o código do livro e confere se é um número inteiro válido. Caso seja, atribui o valor à variável 'codigo'.
 
   for (unsigned long long i = 0; i < qtd_livros; i++) {
@@ -228,9 +229,9 @@ void consultar_usuarios_livro() { // função para consultar os usuários que po
       livro_encontrado = true;
 
       printf("\nLivro encontrado:\n");
-      printf("titulo: %s\n", livros[i].titulo);
+      printf("título: %s\n", livros[i].titulo);
       printf("autor: %s\n", livros[i].autor);
-      printf("codigo: %llu\n", livros[i].codigo);
+      printf("código: %llu\n", livros[i].codigo);
 
       Emprestimo *emprestimos = emprestimos_(); // ponteiro para a array de empréstimos, para que seja possível acessar os empréstimos registrados.
       unsigned long long *qtd_emprestimos = qtd_emprestimos_(); // ponteiro para a variável 'qtd_emprestimos', para que seja possível acessar a quantidade de empréstimos registrados.
@@ -250,7 +251,7 @@ void consultar_usuarios_livro() { // função para consultar os usuários que po
             if (usuarios[k].matricula ==
                 emprestimos[j].matricula_usuario) {
 
-              printf("- %s (matricula %llu)\n",
+              printf("- %s (matrícula %llu)\n",
                      usuarios[k].nome,
                      usuarios[k].matricula);
 
@@ -260,14 +261,15 @@ void consultar_usuarios_livro() { // função para consultar os usuários que po
         }
       }
 
-      if (!possui_emprestimo) 
-        printf("Este livro não possui emprestimos ativos.\n");
-  
+      if (!possui_emprestimo)
+        printf("Este livro não possui empréstimos ativos.\n");
+
+      return;
     }
   }
 
   if (!livro_encontrado) {
-    printf("Livro nao encontrado.\n");
+    printf("Livro não encontrado.\n");
   }
 }
 
